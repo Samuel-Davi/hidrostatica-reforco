@@ -1,0 +1,1936 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Hidrostática: aula de reforço</title>
+<meta name="description" content="Revisão de hidrostática com animações, fórmulas fixas e exercícios resolvidos por tópico.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --abyss:#0a2533; --deep:#12485c; --tide:#1f7a8c; --foam:#e8f1f0; --paper:#f6f8f5; --ink:#12232b; --muted:#4d6670;
+  --sound:#f0b429;   /* pressão */
+  --peso:#d62f4b;    /* peso */
+  --empuxo:#12a37f;  /* empuxo */
+  --line:#c9d8d6;
+  --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --sans:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --gauge:64px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:1.125rem;line-height:1.65;}
+h1,h2,h3{font-family:var(--sans);line-height:1.1;margin:0 0 .5em;letter-spacing:-.02em}
+h2{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:700}
+h3{font-size:1.25rem;font-weight:600}
+p{margin:0 0 1em;max-width:62ch}
+:focus-visible{outline:3px solid var(--sound);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* capítulos */
+.chap{padding:clamp(3rem,9vh,6rem) 6vw;border-bottom:1px solid var(--line)}
+.chap:nth-of-type(even){background:var(--foam)}
+.chap-head{max-width:70ch;margin-bottom:2rem}
+.chap-head .depth{font-family:var(--sans);font-size:.9rem;color:var(--tide);font-weight:600;margin-bottom:.4rem}
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:start}
+@media (max-width:1050px){.grid{grid-template-columns:1fr}}
+.formula{font-family:var(--serif);font-style:italic;font-size:1.7rem;background:#fff;border-left:5px solid var(--sound);padding:.6rem 1rem;margin:1rem 0;display:inline-block}
+.formula small{font-size:.9rem;font-style:normal;color:var(--muted);display:block}
+.formula sub,.formula sup,.num sub{font-size:.65em}
+.steps{counter-reset:s;padding:0;list-style:none;max-width:60ch}
+.steps li{counter-increment:s;position:relative;padding-left:2.4rem;margin-bottom:.8rem}
+.steps li::before{content:counter(s);position:absolute;left:0;top:.1em;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--abyss);color:var(--foam);font:600 .85rem/1.7rem var(--sans);text-align:center}
+.note{background:#fff;border:1px solid var(--line);border-radius:6px;padding:.8rem 1rem;font-size:1rem;max-width:62ch}
+.note b{font-family:var(--sans)}
+
+/* laboratório */
+.lab{background:#fff;border:1px solid var(--line);border-radius:10px;padding:1rem;margin:0;box-shadow:0 1px 0 var(--line)}
+.lab svg{width:100%;height:auto;display:block;background:var(--paper);border-radius:6px;touch-action:none}
+.lab figcaption{font-family:var(--sans);font-size:.85rem;color:var(--muted);margin-top:.5rem}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem 1.2rem;margin-top:.9rem;font-family:var(--sans);font-size:.9rem}
+.controls label{display:flex;flex-direction:column;gap:.15rem}
+.controls output{font-weight:700;color:var(--deep)}
+input[type=range]{width:100%;accent-color:var(--tide);height:28px}
+select,button.btn{font:600 .9rem var(--sans);padding:.45rem .7rem;border:1.5px solid var(--deep);background:#fff;color:var(--ink);border-radius:6px;cursor:pointer}
+button.btn:hover{background:var(--foam)}
+button.btn.on{background:var(--abyss);color:var(--foam)}
+.readout{margin-top:.8rem;padding:.7rem .9rem;background:var(--abyss);color:var(--foam);border-radius:6px;font-family:var(--sans);font-size:.95rem;line-height:1.5}
+.readout .big{font-size:1.5rem;font-weight:700;color:var(--sound)}
+.readout .k{color:#9fc4c8}
+.pill{display:inline-block;padding:.05rem .5rem;border-radius:999px;font-weight:700;color:#fff}
+.pill.sobe{background:var(--empuxo)} .pill.afunda{background:var(--peso)} .pill.eq{background:var(--deep)}
+
+/* exercícios */
+.ex{background:#fff;border:1px solid var(--line);border-radius:8px;margin-bottom:.9rem;max-width:80ch}
+.ex summary{cursor:pointer;padding:.9rem 1.1rem;font-family:var(--sans);font-weight:600;list-style:none;display:flex;gap:.7rem;align-items:baseline}
+.ex summary::-webkit-details-marker{display:none}
+.ex summary .tag{font-size:.75rem;font-weight:600;color:var(--tide);border:1px solid var(--tide);border-radius:4px;padding:0 .35rem;white-space:nowrap}
+.ex .body{padding:0 1.1rem 1rem;border-top:1px dashed var(--line)}
+.ex .q{margin:.8rem 0}
+.ex details.sol{margin-top:.5rem}
+.ex details.sol>summary{padding:.2rem 0;color:var(--deep);font-weight:700}
+.ex ol{padding-left:1.2rem}
+.ans{font-family:var(--sans);font-weight:700;background:var(--sound);color:var(--abyss);padding:.15rem .5rem;border-radius:4px}
+.cheat{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+.cheat div{background:#fff;border:1px solid var(--line);border-radius:8px;padding:1rem}
+.cheat .f{font-style:italic;font-size:1.35rem}
+footer{background:var(--abyss);color:var(--foam);padding:3rem 6vw;font-size:1rem}
+footer a{color:var(--sound)}
+footer ul{padding-left:1.1rem;max-width:80ch}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .waves,.bubble{animation:none}
+}
+</style>
+<style>
+/* Layout do site do aluno: abas fixas no topo, painel de fórmulas sempre visível à direita (gaveta no celular). */
+:root{--nav:56px;--rail:310px}
+body{padding-top:var(--nav);padding-right:var(--rail);background:var(--paper)}
+.top{position:fixed;inset:0 0 auto 0;height:var(--nav);background:var(--abyss);color:var(--foam);display:flex;align-items:center;gap:1.2rem;padding:0 1.2rem;z-index:30}
+.brand{font:800 1.15rem var(--sans);letter-spacing:-.02em;white-space:nowrap}
+.brand span{font-weight:500;color:#9fc4c8;font-size:.85rem;margin-left:.4rem}
+.tabs{display:flex;gap:.3rem;overflow-x:auto;scrollbar-width:none;flex:1}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{color:var(--foam);text-decoration:none;font:600 .88rem var(--sans);padding:.4rem .75rem;border-radius:999px;white-space:nowrap;border:1.5px solid transparent}
+.tabs a:hover{border-color:#3b7889}
+.tabs a.active{background:var(--sound);color:var(--abyss)}
+
+main{max-width:1000px;margin:0 auto}
+section[id]{scroll-margin-top:calc(var(--nav) + 12px)}
+.chap{padding:clamp(2rem,6vh,3.5rem) clamp(1rem,4vw,3rem)}
+.chap:nth-of-type(even){background:var(--foam)}
+.chap-head h2{font-size:clamp(1.7rem,3.4vw,2.4rem);margin-bottom:.8rem}
+.grid{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+@media (max-width:1250px){.grid{grid-template-columns:1fr}}
+.stack{display:grid;gap:1.2rem}
+.rev{padding-left:1.1rem;margin:0 0 1rem;max-width:58ch}
+.rev li{margin-bottom:.5rem}
+.exh{margin:2rem 0 .8rem;font-size:1.15rem}
+
+.howto{padding:1.5rem clamp(1rem,4vw,3rem) 0}
+.howto h2{font-size:1.25rem}
+.flow{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:0 0 .8rem;counter-reset:f}
+.flow li{counter-increment:f;background:var(--abyss);color:var(--foam);font-family:var(--sans);padding:.45rem .9rem;border-radius:6px}
+.flow li::before{content:counter(f) ". ";color:var(--sound);font-weight:700}
+
+/* painel de fórmulas */
+.formulas{position:fixed;top:var(--nav);right:0;bottom:0;width:var(--rail);background:#fff;border-left:1px solid var(--line);overflow-y:auto;padding:1rem 1rem 2rem;z-index:25}
+.formulas h2{font-size:1.1rem;margin-bottom:.8rem}
+.formulas h2 small{font:500 .8rem var(--sans);color:var(--muted);margin-left:.4rem}
+#fx-toggle{display:none}
+.fx{border-left:4px solid var(--line);padding:.35rem .7rem;margin-bottom:.55rem;opacity:.62;transition:opacity .2s,border-color .2s,background .2s}
+.fx.active{border-color:var(--sound);opacity:1;background:#fff8e1}
+.fx .n{font:600 .78rem var(--sans);color:var(--muted)}
+.fx .f{font-style:italic;font-size:1.35rem;line-height:1.3}
+.fx .u{font:.78rem/1.35 var(--sans);color:var(--muted)}
+.fx sub{font-size:.65em}
+
+/* blocos de explicação dentro de um capítulo */
+.chap .grid + .grid{border-top:1px solid var(--line);padding-top:2.2rem;margin-top:2.2rem}
+.chap .grid h3{font-size:1.3rem;font-weight:700;color:var(--abyss)}
+.enunciado{font-size:1.25rem;line-height:1.5;border-left:5px solid var(--tide);padding:.2rem 0 .2rem 1.1rem;margin:0 0 1.2rem;max-width:40ch}
+.enunciado b{font-family:var(--sans);color:var(--deep)}
+.steps.errs li::before{content:"\2715";background:var(--peso);font-size:.75rem}
+/* legenda de símbolos sob cada fórmula */
+.legend{display:flex;flex-wrap:wrap;gap:.15rem 1.1rem;margin:-.4rem 0 1.1rem;padding-left:.6rem;max-width:62ch;font-family:var(--sans);font-size:.88rem;line-height:1.45;color:var(--muted)}
+.legend i{font-family:var(--serif);font-size:1.1em;font-weight:400;color:var(--ink);margin-right:.15em}
+.cheat .f{margin-bottom:.2rem}
+.legend sub{font-size:.7em}
+.legend b{color:var(--peso)}
+.cheat .legend{margin:.4rem 0 0;padding-left:0;font-size:.82rem;gap:.1rem .8rem}
+.chap-head .legend{margin:1rem 0 0;padding:.6rem .8rem;background:#fff;border:1px solid var(--line);border-radius:6px;max-width:80ch}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:0 0 1.2rem}
+.chips li{background:#fff;border:1px solid var(--line);border-left:4px solid var(--tide);border-radius:4px;padding:.25rem .8rem;font-family:var(--sans);font-size:.95rem;font-weight:600}
+.tbl{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);font-size:1rem;margin-bottom:1rem}
+.tbl th,.tbl td{padding:.5rem .7rem;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{font-family:var(--sans);background:var(--abyss);color:var(--foam);font-weight:600}
+.tbl td:first-child{font-family:var(--sans);font-weight:600;white-space:nowrap}
+@media (max-width:600px){.tbl td:first-child{white-space:normal}}
+
+
+/* exercícios */
+.ex{max-width:none}
+.ex summary{display:flex;gap:.7rem;align-items:baseline}
+.eid{font:700 .8rem var(--sans);background:var(--abyss);color:var(--foam);border-radius:4px;padding:.05rem .4rem}
+.etitle{flex:1}
+.tag{font:600 .72rem var(--sans);border:1px solid;border-radius:4px;padding:0 .4rem;white-space:nowrap}
+.tag.real{color:#0b7a5e;border-color:#0b7a5e;background:#e3f6f0}
+.tag.parcial{color:#8a6a10;border-color:#8a6a10;background:#fff6dd}
+.tag.original{color:var(--deep);border-color:var(--tide)}
+.ex.done .etitle{text-decoration:line-through;color:var(--muted)}
+.src{font:.82rem var(--sans);color:var(--muted);margin:.7rem 0 .2rem}
+.chk{font:.85rem var(--sans);display:block;margin-top:.7rem;color:var(--muted)}
+.ex .q{margin-top:.2rem}
+.foot{background:var(--abyss);color:var(--foam);padding:2rem clamp(1rem,4vw,3rem);font-size:.95rem}
+.foot a{color:var(--sound)}
+.foot p{max-width:90ch}
+
+@media (max-width:1100px){
+  :root{--rail:0px}
+  body{padding-bottom:64px}
+  .brand span{display:none}
+  .formulas h2{display:none}
+  .formulas{top:auto;left:0;width:auto;border-left:0;border-top:2px solid var(--sound);padding:0;max-height:70vh;overflow:hidden;display:flex;flex-direction:column}
+  #fx-toggle{display:flex;align-items:center;gap:.7rem;width:100%;border:0;background:#fff;padding:.7rem 1rem;font:600 1rem var(--sans);text-align:left;cursor:pointer;min-height:56px}
+  #fx-toggle .cur{font-style:italic;font-family:var(--serif);font-size:1.2rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #fx-toggle .chev{width:10px;height:10px;border-right:3px solid var(--ink);border-top:3px solid var(--ink);transform:rotate(-45deg);transition:transform .2s}
+  .formulas.open #fx-toggle .chev{transform:rotate(135deg)}
+  #fx-list{display:none;overflow-y:auto;padding:.5rem 1rem 1.5rem}
+  .formulas.open #fx-list{display:block}
+  .fx{opacity:1}
+}
+@media (max-width:560px){.tabs a{font-size:.82rem;padding:.35rem .6rem}}
+
+/* simulado */
+.sq{background:#fff;border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem;margin-bottom:.9rem;max-width:80ch}
+.sqh{font:600 .95rem var(--sans);display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap}
+.sqh small{color:var(--muted);font-weight:500}
+.sq .q{margin:.5rem 0}
+.opts{display:grid;gap:.35rem}
+.opts label{display:flex;gap:.5rem;align-items:flex-start;padding:.4rem .6rem;border:1.5px solid var(--line);border-radius:6px;cursor:pointer}
+.opts label:hover{background:var(--foam)}
+.opts label.right{border-color:var(--empuxo);background:#e3f6f0}
+.opts label.wrong{border-color:var(--peso);background:#fdeaee}
+.disc{font:.9rem var(--sans);color:var(--muted);margin:0}
+.sim-actions{margin:1rem 0;display:flex;gap:.6rem}
+.sim-score{font:700 1.1rem var(--sans)}
+.sr-item{background:#fff;border-left:5px solid var(--sound);padding:.5rem 1rem;margin-bottom:.7rem;max-width:80ch}
+.sr-item p{margin:.2rem 0}
+
+/* bloco compacto de fórmulas: tudo visível sem rolar */
+.formulas{padding:.7rem .8rem}
+.formulas h2{font-size:1rem;margin-bottom:.5rem}
+.fx{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;padding:.25rem .5rem;margin-bottom:.25rem;opacity:.8;border-left-width:3px}
+.fx .n{font:600 .74rem var(--sans);color:var(--muted);flex:0 1 auto}
+.fx .f{font-style:italic;font-size:1.08rem;line-height:1.25;white-space:nowrap;font-family:var(--serif)}
+.fx.active{opacity:1}
+.conv{font:.74rem/1.5 var(--sans);color:var(--muted);margin:.6rem 0 0;padding:.4rem .6rem;background:var(--foam);border-radius:6px}
+@media (max-width:1100px){.fx{opacity:1}}
+
+/* figuras animadas do simulado */
+.figbox{position:relative;margin:.6rem 0 .9rem;max-width:520px;border:1px solid var(--line);border-radius:8px;background:linear-gradient(#f3f8f7,#fff);overflow:hidden}
+.figbox svg{display:block;width:100%;height:auto}
+.figbox .rep{position:absolute;right:.4rem;top:.4rem;font:600 .75rem var(--sans);border:1px solid var(--tide);background:#fff;color:var(--deep);border-radius:999px;padding:.2rem .65rem;cursor:pointer;z-index:2}
+.figbox .rep:hover{background:var(--foam)}
+.figcap{font:.78rem var(--sans);color:var(--muted);margin:0 0 .6rem}
+.ft{font:600 11px var(--sans);fill:#12313d}.ft.r{fill:#d62f4b}.ft.g{fill:#0b7a5e}.ft.w{fill:#fff}.ft.big{font-size:16px;font-weight:800}
+.an{animation-duration:var(--T,8s);animation-iteration-count:infinite;animation-timing-function:ease-in-out;transform-box:fill-box}
+.an.lin{animation-timing-function:linear}
+.ob{transform-origin:50% 100%}.ot{transform-origin:50% 0}
+.figbox:not(.on) .an,.figbox:not(.on) .pt{animation-play-state:paused}
+.pt{animation:jit 1.7s linear infinite}
+@keyframes jit{0%,100%{transform:translate(0,0)}25%{transform:translate(24px,12px)}50%{transform:translate(8px,30px)}75%{transform:translate(-8px,12px)}}
+@keyframes lbA{0%,45%{opacity:1}50%,100%{opacity:0}}
+@keyframes lbB{0%,50%{opacity:0}58%,100%{opacity:1}}
+.k-lbA{animation-name:lbA}.k-lbB{animation-name:lbB}.lba{opacity:0}.lbb{opacity:1}
+/* Q4 */
+@keyframes cap{0%,40%{transform:none;opacity:1}55%,100%{transform:translateY(-26px);opacity:0}}
+@keyframes jet{0%,52%{stroke-dashoffset:1;opacity:0}53%{opacity:1}76%,100%{stroke-dashoffset:0;opacity:1}}
+.k-cap{animation-name:cap}.cap{opacity:0}
+.k-jet{animation-name:jet;stroke-dasharray:1}
+/* Q5 */
+@keyframes ow{0%,10%{transform:scaleY(1.4)}60%,100%{transform:none}}
+@keyframes rw{0%,10%{transform:scaleY(.7778)}60%,100%{transform:none}}
+@keyframes oil{0%,10%{transform:translateY(-24px) scaleY(0)}60%,100%{transform:none}}
+@keyframes pour{0%,8%{opacity:0}12%,58%{opacity:1}62%,100%{opacity:0}}
+.k-ow{animation-name:ow}.k-rw{animation-name:rw}.k-oil{animation-name:oil}.k-pour{animation-name:pour;opacity:0}
+/* Q6 */
+@keyframes mL{0%,10%{transform:scaleY(1.375)}55%,100%{transform:none}}
+@keyframes mR{0%,10%{transform:scaleY(.7857)}55%,100%{transform:none}}
+.k-mL{animation-name:mL}.k-mR{animation-name:mR}
+/* prensa */
+@keyframes pL{0%,15%{transform:translateY(-30px)}60%,100%{transform:none}}
+@keyframes pR{0%,15%{transform:translateY(6px)}60%,100%{transform:none}}
+@keyframes fL{0%,15%{transform:scaleY(1.484)}60%,100%{transform:none}}
+@keyframes fR{0%,15%{transform:scaleY(.9167)}60%,100%{transform:none}}
+.k-pL{animation-name:pL}.k-pR{animation-name:pR}.k-fL{animation-name:fL}.k-fR{animation-name:fR}
+/* Q9 ludião */
+@keyframes dv{0%,15%{transform:none}45%,60%{transform:translateY(62px)}85%,100%{transform:none}}
+@keyframes air{0%,15%{transform:none}45%,60%{transform:scaleY(.5)}85%,100%{transform:none}}
+@keyframes hL{0%,15%{transform:none}45%,60%{transform:translateX(7px)}85%,100%{transform:none}}
+@keyframes hR{0%,15%{transform:none}45%,60%{transform:translateX(-7px)}85%,100%{transform:none}}
+@keyframes bt{0%,15%{transform:none}45%,60%{transform:scaleX(.95)}85%,100%{transform:none}}
+@keyframes lbP{0%,25%{opacity:0}40%,60%{opacity:1}75%,100%{opacity:0}}
+.k-dv{animation-name:dv}.k-air{animation-name:air}.k-hL{animation-name:hL}.k-hR{animation-name:hR}.k-bt{animation-name:bt;transform-origin:50% 50%}.k-lbP{animation-name:lbP;opacity:0}
+/* Q10 */
+@keyframes hang{0%,12%{transform:translateY(-22px)}50%,100%{transform:none}}
+.k-hang{animation-name:hang}
+/* Q11 */
+@keyframes berg{0%{transform:translateY(-55px)}30%{transform:translateY(14px)}45%{transform:translateY(-5px)}60%,100%{transform:none}}
+.k-berg{animation-name:berg}
+/* Q12 */
+@keyframes boia{0%,10%{transform:translateY(-38px)}50%,100%{transform:none}}
+.k-boia{animation-name:boia}
+/* Q13 */
+@keyframes sub{0%{transform:translateY(-100px)}60%,100%{transform:none}}
+.k-sub{animation-name:sub}
+@keyframes d0{0%,19.9%{opacity:1}20%,100%{opacity:0}}
+@keyframes d1{0%,19.9%{opacity:0}20%,39.9%{opacity:1}40%,100%{opacity:0}}
+@keyframes d2{0%,39.9%{opacity:0}40%,59.9%{opacity:1}60%,100%{opacity:0}}
+@keyframes d3{0%,59.9%{opacity:0}60%,100%{opacity:1}}
+.k-d0{animation-name:d0;opacity:0}.k-d1{animation-name:d1;opacity:0}.k-d2{animation-name:d2;opacity:0}.k-d3{animation-name:d3}
+.an.k-d0,.an.k-d1,.an.k-d2,.an.k-d3{animation-timing-function:step-end}
+/* Q15 */
+@keyframes cubo{0%{transform:translateY(-110px)}35%,100%{transform:none}}
+@keyframes str{0%,38%{stroke-dashoffset:1;opacity:0}39%{opacity:1}55%,100%{stroke-dashoffset:0;opacity:1}}
+.k-cubo{animation-name:cubo;animation-timing-function:ease-in}.k-str{animation-name:str;stroke-dasharray:1}
+/* Q16 */
+@keyframes qw{0%,10%{transform:scaleY(0)}60%,100%{transform:none}}
+@keyframes qs{0%,10%{transform:scaleY(1.2)}60%,100%{transform:none}}
+@keyframes qc{0%,10%{transform:translateY(10px)}60%,100%{transform:none}}
+.k-qw{animation-name:qw}.k-qs{animation-name:qs}.k-qc{animation-name:qc}
+/* seção de desafio do simulado */
+.sim-sec{margin:2rem 0 1rem;padding:1rem 1.1rem;border-left:5px solid var(--peso,#d62f4b);background:#fff;border-radius:0 8px 8px 0}
+.sim-sec h3{margin:0 0 .3rem}.sim-sec p{margin:0;font:.95rem/1.5 var(--sans);color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.an,.pt{animation:none!important}.lba,.k-pour,.k-lbP{opacity:0}}
+
+/* resposta logo abaixo de cada questão */
+.sq-res{margin-top:.8rem;padding:.7rem .9rem;border-left:5px solid var(--sound);background:#fff8e1;border-radius:0 6px 6px 0;font:.95rem/1.55 var(--sans)}
+.sq-res p{margin:.15rem 0;max-width:none}
+.sq-res .ok{color:#0b7a5e;font-weight:700}.sq-res .no{color:var(--peso);font-weight:700}
+.sq.acertou{border-color:var(--empuxo)}.sq.errou{border-color:var(--peso)}
+.sim-banner{position:sticky;top:calc(var(--nav) + 8px);z-index:5;margin:0 0 1rem;padding:.6rem 1rem;background:var(--abyss);color:var(--foam);border-radius:8px;font:700 1.05rem var(--sans);max-width:80ch}
+.sim-banner small{font-weight:500;color:#9fc4c8;margin-left:.6rem}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="mk-peso" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d62f4b"/></marker>
+    <marker id="mk-empuxo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#12a37f"/></marker>
+    <marker id="mk-sound" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c98a00"/></marker>
+    <marker id="mk-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#12232b"/></marker>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="brand">Hidrostática <span>aula de reforço</span></div>
+  <nav class="tabs" aria-label="Tópicos">
+    <a href="#densidade" data-nav="densidade">Densidade</a>
+    <a href="#pressao" data-nav="pressao">Pressão</a>
+    <a href="#stevin" data-nav="stevin">Stevin</a>
+    <a href="#vasos" data-nav="vasos">Vasos comunicantes</a>
+    <a href="#manometro" data-nav="manometro">Manômetro</a>
+    <a href="#pascal" data-nav="pascal">Pascal</a>
+    <a href="#arquimedes" data-nav="arquimedes">Empuxo</a>
+    <a href="#torricelli" data-nav="torricelli">Bônus: Torricelli</a>
+    <a href="#simulado" data-nav="simulado">Simulado</a>
+  </nav>
+</header>
+
+<aside class="formulas" id="formulas" aria-label="Fórmulas">
+  <button id="fx-toggle" type="button" aria-expanded="false" aria-controls="fx-list"><b>Fórmulas</b> <span class="cur" id="fx-current"></span><span class="chev" aria-hidden="true"></span></button>
+  <div id="fx-list">
+    <h2>Fórmulas <small>g = 10 m/s²</small></h2>
+    <div class="fx" data-topic="densidade"><span class="n">Densidade</span><span class="f">d = m / V</span></div>
+    <div class="fx" data-topic="densidade"><span class="n">Peso</span><span class="f">P = m · g</span></div>
+    <div class="fx" data-topic="pressao"><span class="n">Pressão</span><span class="f">p = F / A</span></div>
+    <div class="fx" data-topic="stevin"><span class="n">Pressão em profundidade</span><span class="f">p<sub>hid</sub> = d · g · h</span></div>
+    <div class="fx" data-topic="stevin"><span class="n">Pressão absoluta</span><span class="f">p = p₀ + d · g · h</span></div>
+    <div class="fx" data-topic="stevin"><span class="n">Stevin</span><span class="f">Δp = d · g · Δh</span></div>
+    <div class="fx" data-topic="vasos"><span class="n">Dois líquidos</span><span class="f">d₁h₁ = d₂h₂</span></div>
+    <div class="fx" data-topic="manometro"><span class="n">Manômetro</span><span class="f">p<sub>gás</sub> = p₀ + d·g·Δh</span></div>
+    <div class="fx" data-topic="pascal"><span class="n">Pascal</span><span class="f">F₁/A₁ = F₂/A₂</span></div>
+    <div class="fx" data-topic="arquimedes"><span class="n">Empuxo</span><span class="f">E = d<sub>fl</sub> · V<sub>imerso</sub> · g</span></div>
+    <div class="fx" data-topic="arquimedes"><span class="n">Peso aparente</span><span class="f">P<sub>ap</sub> = P − E</span></div>
+    <div class="fx" data-topic="torricelli"><span class="n">Torricelli</span><span class="f">p<sub>atm</sub> = d · g · H</span></div>
+    <p class="conv">1 g/cm³ = 1000 kg/m³<br>1 cm² = 10⁻⁴ m²<br>1 atm ≈ 10⁵ Pa</p>
+  </div>
+</aside>
+
+<main>
+  <section class="howto">
+    <h2>Como resolver (padrão da prova)</h2>
+    <ol class="flow">
+      <li><b>Dados</b> com unidades do SI</li>
+      <li><b>Fórmula</b> escolhida</li>
+      <li><b>Conta</b> organizada</li>
+      <li><b>Resposta</b> com unidade</li>
+    </ol>
+    <p class="note">Na P1 de Física, resposta sem unidade ou com sinal errado desconta 0,2 ponto, e conta desorganizada pode ser anulada. Converta antes: <b>cm → m</b>, <b>cm² → m²</b>, <b>g/cm³ → kg/m³</b> (× 1000).</p>
+  </section>
+
+  <section class="chap" id="densidade" data-topic="densidade">
+    <div class="chap-head"><h2>Densidade</h2></div>
+    <div class="grid">
+      <div>
+        <ul class="rev">
+          <li>Densidade é a massa por volume: <b>d = m / V</b>. Mostra o quão “apertada” é a matéria.</li>
+          <li>Objeto mais denso que o fluido <b>afunda</b>; menos denso <b>flutua</b>.</li>
+          <li>Água: 1 g/cm³ = 1000 kg/m³. Gelo: 920. Óleo: ≈ 800. Mercúrio: 13 600.</li>
+        </ul>
+        <p class="note"><b>Pegadinha:</b> massa não é densidade. Um navio pesa mais que um prego, mas só o prego afunda.</p>
+      </div>
+      <figure class="lab">
+      <svg id="de-svg" viewBox="0 0 600 280" role="img" aria-label="Bloco com pontos representando a massa">
+        <rect width="600" height="280" fill="#eef3f1"/>
+        <rect id="de-box" fill="#fff" stroke="#12485c" stroke-width="3"/>
+        <g id="de-dots" fill="#12485c"></g>
+        <text id="de-water" x="560" y="40" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="18" fill="#12485c"></text>
+      </svg>
+      <div class="controls">
+        <label>Massa m <output id="de-mo"></output><input id="de-m" type="range" min="10" max="2000" step="10" value="400"></label>
+        <label>Volume V <output id="de-vo"></output><input id="de-v" type="range" min="10" max="500" step="10" value="200"></label>
+      </div>
+      <div class="readout" id="de-out"></div>
+    </figure>
+    </div>
+    <h3 class="exh">Exercícios</h3><div id="ex-densidade"></div>
+  </section>
+
+  <section class="chap" id="pressao" data-topic="pressao">
+    <div class="chap-head"><h2>Pressão</h2></div>
+    <div class="grid">
+      <div>
+        <ul class="rev">
+          <li>Pressão é a força perpendicular por área: <b>p = F / A</b>. Unidade: pascal (Pa).</li>
+          <li>Mesma força em área menor: pressão maior (prego, faca, salto agulha).</li>
+          <li>Ordem de grandeza: 1 atm ≈ 10⁵ Pa.</li>
+        </ul>
+        <p class="note"><b>Pegadinha:</b> 1 cm² não é 10⁻² m². É <b>10⁻⁴ m²</b>.</p>
+      </div>
+      <figure class="lab">
+      <svg id="pr-svg" viewBox="0 0 600 300" role="img" aria-label="Bloco apoiado na areia com uma força para baixo">
+        <rect x="0" y="0" width="600" height="300" fill="#eef3f1"/>
+        <path id="pr-sand" fill="#d9c28b"/>
+        <rect id="pr-block" fill="#12485c" rx="3"/>
+        <line id="pr-arrow" stroke="#d62f4b" stroke-width="5" marker-end="url(#mk-peso)"/>
+        <text id="pr-flabel" fill="#d62f4b" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="18"></text>
+        <text x="20" y="34" font-family="Bricolage Grotesque, sans-serif" font-size="14" fill="#4d6670">pressão na areia</text>
+        <rect x="20" y="44" width="200" height="14" fill="#fff" stroke="#c9d8d6"/>
+        <rect id="pr-bar" x="20" y="44" height="14" fill="#f0b429"/>
+      </svg>
+      <div class="controls">
+        <label>Força F <output id="pr-fo"></output><input id="pr-f" type="range" min="10" max="1000" step="10" value="600"></label>
+        <label>Área de contato A <output id="pr-ao"></output><input id="pr-a" type="range" min="1" max="400" step="1" value="1"></label>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:end">
+          <button class="btn" data-f="600" data-a="1">Salto agulha</button>
+          <button class="btn" data-f="600" data-a="150">Sapato</button>
+          <button class="btn" data-f="600" data-a="400">Bota larga</button>
+        </div>
+      </div>
+      <div class="readout" id="pr-out"></div>
+    </figure>
+    </div>
+    <h3 class="exh">Exercícios</h3><div id="ex-pressao"></div>
+  </section>
+
+  <section class="chap" id="stevin" data-topic="stevin">
+    <div class="chap-head"><h2>Teorema de Stevin</h2></div>
+    <div class="grid">
+      <div>
+        <ul class="rev">
+          <li>Em um líquido em repouso, a pressão cresce com a profundidade: <b>Δp = d·g·Δh</b>.</li>
+          <li>Pressão absoluta no líquido aberto: <b>p = p₀ + d·g·h</b>.</li>
+          <li>Pontos no mesmo nível, no mesmo líquido, têm a mesma pressão.</li>
+          <li>A pressão <b>não</b> depende do formato do recipiente nem da quantidade de líquido, só da altura.</li>
+        </ul>
+        <p class="note"><b>Pegadinha:</b> o enunciado pediu pressão <em>absoluta</em>? Então some p₀.</p>
+      </div>
+      <figure class="lab">
+      <svg id="st-svg" viewBox="0 0 600 380" role="img" aria-label="Tanque com um medidor de pressão que desce">
+        <rect width="600" height="380" fill="#eef3f1"/>
+        <g id="st-p0"></g>
+        <rect id="st-liq" x="140" y="70" width="320" height="290"/>
+        <path d="M140 30 V360 H460 V30" fill="none" stroke="#12232b" stroke-width="4"/>
+        <line id="st-ruler" x1="140" x2="140" y1="70" y2="350" stroke="#12232b"/>
+        <g id="st-ticks" font-family="Bricolage Grotesque, sans-serif" font-size="12" fill="#12232b"></g>
+        <g id="st-probe" style="cursor:grab"><g id="st-arrows"></g><circle r="9" fill="#f0b429" stroke="#12232b" stroke-width="2"/></g>
+      </svg>
+      <div class="controls">
+        <label>Profundidade h <output id="st-ho"></output><input id="st-h" type="range" min="0" max="10" step="0.1" value="5"></label>
+        <label>Líquido
+          <select id="st-fl">
+            <option value="1000">Água (1000 kg/m³)</option>
+            <option value="800">Óleo (800 kg/m³)</option>
+            <option value="13600">Mercúrio (13 600 kg/m³)</option>
+          </select>
+        </label>
+        <label style="flex-direction:row;align-items:center;gap:.5rem"><input id="st-atm" type="checkbox" checked> incluir pressão atmosférica</label>
+      </div>
+      <div class="readout" id="st-out"></div>
+    </figure>
+    </div>
+    <h3 class="exh">Exercícios</h3><div id="ex-stevin"></div>
+  </section>
+
+  <section class="chap" id="vasos" data-topic="vasos">
+    <div class="chap-head"><h2>Vasos comunicantes</h2></div>
+    <div class="grid">
+      <div>
+        <ul class="rev">
+          <li>Com um só líquido, o nível é o mesmo em todos os ramos, qualquer que seja o formato.</li>
+          <li>Com dois líquidos que não se misturam, iguale as pressões na <b>superfície de separação</b>: <b>d₁·h₁ = d₂·h₂</b>.</li>
+          <li>O líquido menos denso forma a coluna mais alta.</li>
+        </ul>
+        <p class="note"><b>Pegadinha:</b> meça h<sub>1</sub> e h<sub>2</sub> a partir da superfície de separação, não do fundo.</p>
+      </div>
+      <div class="stack"><figure class="lab">
+      <svg id="vc-svg" viewBox="0 0 600 340" role="img" aria-label="Três vasos de formatos diferentes ligados pelo fundo, com o mesmo nível de água">
+        <defs><clipPath id="vc-clip">
+          <path d="M80 80 H116 V300 H80z"/>
+          <path d="M190 120 H340 L300 300 H230z"/>
+          <path d="M400 100 H430 L470 300 H370z"/>
+          <path d="M80 300 H470 V330 H80z"/>
+        </clipPath></defs>
+        <rect width="600" height="340" fill="#eef3f1"/>
+        <rect id="vc-water" x="0" width="600" fill="#1f7a8c" opacity=".85" clip-path="url(#vc-clip)"/>
+        <g fill="none" stroke="#12232b" stroke-width="4" stroke-linejoin="round">
+          <path d="M80 80 V300 M116 80 V300"/>
+          <path d="M190 120 L230 300 M340 120 L300 300"/>
+          <path d="M400 100 L370 300 M430 100 L470 300"/>
+          <path d="M80 330 H470 M80 300 H80 M116 300 H230 M300 300 H370"/>
+        </g>
+        <line id="vc-line" x1="50" x2="500" stroke="#c98a00" stroke-width="2" stroke-dasharray="6 5"/>
+        <text id="vc-lbl" x="505" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14" fill="#c98a00"></text>
+        <g id="vc-arrows"></g>
+      </svg>
+      <div class="controls">
+        <label>Altura da água h <output id="vc-ho"></output><input id="vc-h" type="range" min="5" max="34" step="1" value="25"></label>
+      </div>
+      <div class="readout" id="vc-out"></div>
+    </figure><figure class="lab">
+      <svg id="ut-svg" viewBox="0 0 600 330" role="img" aria-label="Tubo em U com óleo no ramo esquerdo e água no direito">
+        <rect width="600" height="330" fill="#eef3f1"/>
+        <path d="M190 40 V270 H410 V40" fill="none" stroke="#12232b" stroke-width="4"/>
+        <path d="M250 40 V210 H350 V40" fill="none" stroke="#12232b" stroke-width="4"/>
+        <rect id="ut-wl" fill="#1f7a8c" opacity=".85"/>
+        <rect id="ut-wr" fill="#1f7a8c" opacity=".85"/>
+        <rect id="ut-wb" fill="#1f7a8c" opacity=".85"/>
+        <rect id="ut-oil" fill="#e0b04a" opacity=".9"/>
+        <line x1="150" x2="450" y1="200" y2="200" stroke="#c98a00" stroke-width="2" stroke-dasharray="6 5"/>
+        <text x="455" y="204" font-family="Bricolage Grotesque, sans-serif" font-size="13" fill="#c98a00" font-weight="700">mesma pressão</text>
+        <g font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14">
+          <text id="ut-lo" fill="#8a6a10"></text><text id="ut-lw" fill="#12485c"></text>
+        </g>
+        <line id="ut-bo" stroke="#8a6a10" stroke-width="2" marker-end="url(#mk-ink)"/>
+        <line id="ut-bw" stroke="#12485c" stroke-width="2" marker-end="url(#mk-ink)"/>
+      </svg>
+      <div class="controls">
+        <label>Altura do óleo h₁ <output id="ut-ho"></output><input id="ut-h" type="range" min="5" max="25" step="1" value="20"></label>
+        <label>Densidade do óleo d₁ <output id="ut-do"></output><input id="ut-d" type="range" min="600" max="950" step="10" value="800"></label>
+      </div>
+      <div class="readout" id="ut-out"></div>
+    </figure></div>
+    </div>
+    <h3 class="exh">Exercícios</h3><div id="ex-vasos"></div>
+  </section>
+
+  <section class="chap" id="manometro" data-topic="manometro">
+    <div class="chap-head"><h2>Manômetro</h2></div>
+    <div class="grid">
+      <div>
+        <ul class="rev">
+          <li>O manômetro de tubo aberto compara a pressão de um gás com a atmosfera usando uma coluna de líquido.</li>
+          <li>Na altura do menor nível, a pressão é igual nos dois ramos: <b>p<sub>gás</sub> = p₀ + d·g·Δh</b>.</li>
+          <li>Ramo aberto mais alto: gás acima da atmosférica. Mais baixo: abaixo.</li>
+          <li>A parte <b>d·g·Δh</b> é a pressão manométrica.</li>
+        </ul>
+        <p class="note"><b>Pegadinha:</b> o manômetro marca a diferença. Para a pressão total do gás, some p₀.</p>
+      </div>
+      <figure class="lab">
+        <svg id="mn-svg" viewBox="0 0 600 320" role="img" aria-label="Manômetro de tubo aberto ligado a um gás">
+          <rect width="600" height="320" fill="#eef3f1"/>
+          <rect id="mn-bw"/><rect id="mn-lw"/><rect id="mn-rw"/>
+          <rect x="200" y="20" width="80" height="70" rx="12" fill="#fff" stroke="#12232b" stroke-width="4"/>
+          <g id="mn-dots" fill="#c98a00"></g>
+          <path d="M220 90 V290 H380 V40" fill="none" stroke="#12232b" stroke-width="4"/>
+          <path d="M260 90 V250 H340 V40" fill="none" stroke="#12232b" stroke-width="4"/>
+          <line id="mn-line" x1="196" x2="404" stroke="#c98a00" stroke-width="2" stroke-dasharray="6 5"/>
+          <line id="mn-br" x1="420" x2="420" stroke="#12232b" stroke-width="2" marker-end="url(#mk-ink)"/>
+          <text id="mn-brt" x="430" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="15" fill="#12232b"></text>
+          <g stroke="#4d6670" stroke-width="3" marker-end="url(#mk-ink)"><line x1="345" x2="345" y1="6" y2="34" marker-end="url(#mk-ink)"/><line x1="375" x2="375" y1="6" y2="34" marker-end="url(#mk-ink)"/></g>
+          <text x="322" y="18" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="700" fill="#4d6670">p₀</text>
+          <text x="190" y="60" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="700" fill="#c98a00">gás</text>
+        </svg>
+        <div class="controls">
+          <label>Pressão manométrica do gás <output id="mn-po"></output><input id="mn-p" type="range" min="-25" max="25" step="1" value="15"></label>
+          <label>Líquido
+            <select id="mn-fl"><option value="13600">Mercúrio (13 600 kg/m³)</option><option value="1000">Água (1000 kg/m³)</option></select>
+          </label>
+        </div>
+        <div class="readout" id="mn-out"></div>
+      </figure>
+    </div>
+    <h3 class="exh">Exercícios</h3><div id="ex-manometro"></div>
+  </section>
+
+  <section class="chap" id="pascal" data-topic="pascal">
+    <div class="chap-head"><h2>Princípio de Pascal</h2></div>
+    <div class="grid">
+      <div>
+        <ul class="rev">
+          <li>Um acréscimo de pressão em um ponto de um fluido em equilíbrio chega <b>integralmente</b> a todos os pontos.</li>
+          <li>Prensa hidráulica: <b>F₁/A₁ = F₂/A₂</b>. A força é multiplicada pela razão das áreas.</li>
+          <li>O líquido é incompressível: <b>A₁·d₁ = A₂·d₂</b>. O êmbolo grande anda menos.</li>
+          <li>Trabalho: W₁ = W₂. Não se ganha energia.</li>
+        </ul>
+        <p class="note"><b>Pegadinha:</b> se o enunciado dá diâmetros, a razão de áreas é o <b>quadrado</b> da razão dos diâmetros.</p>
+      </div>
+      <figure class="lab">
+      <svg id="pa-svg" viewBox="0 0 600 340" role="img" aria-label="Prensa hidráulica com dois êmbolos">
+        <rect width="600" height="340" fill="#eef3f1"/>
+        <rect id="pa-fl1" fill="#1f7a8c" opacity=".85"/><rect id="pa-fl2" fill="#1f7a8c" opacity=".85"/><rect id="pa-fl3" fill="#1f7a8c" opacity=".85"/>
+        <path id="pa-wall" fill="none" stroke="#12232b" stroke-width="4"/>
+        <rect id="pa-p1" fill="#12232b"/><rect id="pa-p2" fill="#12232b"/>
+        <rect id="pa-load" fill="#d62f4b" rx="4"/>
+        <text id="pa-loadt" text-anchor="middle" fill="#fff" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14">carga</text>
+        <line id="pa-f1" stroke="#c98a00" stroke-width="5" marker-end="url(#mk-sound)"/>
+        <text id="pa-f1t" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="16" fill="#c98a00"></text>
+        <line id="pa-f2" stroke="#12a37f" stroke-width="5" marker-end="url(#mk-empuxo)"/>
+        <text id="pa-f2t" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="16" fill="#12a37f"></text>
+      </svg>
+      <div class="controls">
+        <label>Força aplicada F₁ <output id="pa-fo"></output><input id="pa-f" type="range" min="10" max="200" step="10" value="100"></label>
+        <label>Razão de áreas A₂/A₁ <output id="pa-ro"></output><input id="pa-r" type="range" min="2" max="6" step="1" value="4"></label>
+        <label>Descida do êmbolo menor d₁ <output id="pa-do"></output><input id="pa-d" type="range" min="0" max="20" step="1" value="10"></label>
+        <button class="btn" id="pa-play" type="button">Bombear</button>
+      </div>
+      <div class="readout" id="pa-out"></div>
+    </figure>
+    </div>
+  <div class="grid">
+    <div>
+      <h3>O enunciado</h3>
+      <p class="enunciado"><b>Princípio de Pascal:</b> uma <em>variação</em> de pressão aplicada a um fluido incompressível em equilíbrio transmite-se integralmente a todos os pontos do fluido e às paredes do recipiente.</p>
+      <p>É consequência de Stevin: se a pressão na superfície ganha Δp, todo ponto ganha o mesmo Δp, em qualquer profundidade.</p>
+      <div class="formula" style="font-size:1.4rem">p = p<sub>antes</sub> + Δp</div>
+      <p class="legend"><span><i>p</i> pressão no ponto depois da variação (Pa)</span><span><i>p<sub>antes</sub></i> pressão no ponto antes (Pa)</span><span><i>Δp</i> acréscimo de pressão aplicado (Pa)</span></p>
+      <p class="note"><b>Repare:</b> o que se transmite é o <em>acréscimo</em>. A pressão total ainda cresce com a profundidade.</p>
+    </div>
+    <figure class="lab">
+      <svg id="pt-svg" viewBox="0 0 600 340" role="img" aria-label="Recipiente com êmbolo e quatro pontos em profundidades diferentes, todos recebendo o mesmo acréscimo de pressão">
+        <rect width="600" height="340" fill="#eef3f1"/>
+        <rect x="60" y="70" width="240" height="240" fill="#1f7a8c" opacity=".55"/>
+        <path d="M60 40 V310 H300 V40" fill="none" stroke="#12232b" stroke-width="4"/>
+        <rect x="62" y="54" width="236" height="16" fill="#12232b"/>
+        <line id="pt-f" x1="180" x2="180" y2="52" stroke="#c98a00" stroke-width="5" marker-end="url(#mk-sound)"/>
+        <text id="pt-ft" x="194" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="16" fill="#c98a00">Δp</text>
+        <g id="pt-rows"></g>
+        <rect x="330" y="314" width="12" height="12" fill="#1f7a8c"/>
+        <text x="348" y="325" font-family="Bricolage Grotesque, sans-serif" font-size="13" fill="#12232b">d·g·h (Stevin)</text>
+        <rect x="460" y="314" width="12" height="12" fill="#f0b429"/>
+        <text x="478" y="325" font-family="Bricolage Grotesque, sans-serif" font-size="13" fill="#12232b">Δp transmitido</text>
+      </svg>
+      <div class="controls">
+        <label>Acréscimo de pressão Δp <output id="pt-do"></output><input id="pt-d" type="range" min="0" max="40" step="1" value="20"></label>
+        <button class="btn" id="pt-play" type="button">Empurrar o êmbolo</button>
+      </div>
+      <div class="readout" id="pt-out"></div>
+    </figure>
+  </div>
+
+  <div class="grid">
+    <div>
+      <h3>A prensa hidráulica, passo a passo</h3>
+      <ol class="steps">
+        <li>Uma força <b>F<sub>1</sub></b> no êmbolo pequeno cria a pressão <b>p = F<sub>1</sub>/A<sub>1</sub></b>.</li>
+        <li>Essa mesma pressão atua no êmbolo grande: <b>F<sub>2</sub> = p · A<sub>2</sub></b>.</li>
+        <li>Logo <b>F<sub>2</sub> = F<sub>1</sub> · A<sub>2</sub>/A<sub>1</sub></b>. Com A<sub>2</sub> = 50·A<sub>1</sub>, 100 N viram 5000 N.</li>
+        <li>O preço: o volume se conserva, então o êmbolo grande sobe <b>50 vezes menos</b>. O trabalho é o mesmo.</li>
+      </ol>
+      <p>O freio do carro é a mesma ideia, com várias saídas. Também usam Pascal: elevador de carros, macaco, escavadeira e o elevador de cadeirante (ENEM 2013).</p>
+    </div>
+    <figure class="lab">
+      <svg id="fr-svg" viewBox="0 0 600 300" role="img" aria-label="Freio hidráulico: pedal empurra o êmbolo do cilindro mestre, o líquido leva a pressão até a pastilha, que aperta o disco">
+        <rect width="600" height="300" fill="#eef3f1"/>
+        <rect id="fr-mfl" x="65" y="126" height="48" fill="#1f7a8c" opacity=".85"/>
+        <rect x="150" y="145" width="250" height="10" fill="#1f7a8c" opacity=".85"/>
+        <rect id="fr-sfl" x="402" y="112" height="76" width="68" fill="#1f7a8c" opacity=".85"/>
+        <path d="M50 125 H150 V145 H400 V110 H500 M50 175 H150 V155 H400 V190 H500 M50 125 V175 M400 110 V145 M400 155 V190" fill="none" stroke="#12232b" stroke-width="4"/>
+        <line id="fr-rod" x1="30" y1="150" x2="55" y2="150" stroke="#12232b" stroke-width="6"/>
+        <rect id="fr-mp" x="55" y="121" width="10" height="58" fill="#12232b"/>
+        <circle id="fr-bub" cx="275" cy="150" r="9" fill="#fff" stroke="#12232b" stroke-width="2" visibility="hidden"/>
+        <rect id="fr-sp" x="470" y="108" width="10" height="84" fill="#12232b"/>
+        <rect id="fr-pad" x="482" y="120" width="14" height="60" fill="#8a6a10"/>
+        <rect x="540" y="86" width="26" height="128" fill="#98a4ab" stroke="#12232b" stroke-width="2"/>
+        <line id="fr-fa" x1="30" x2="60" y1="96" y2="96" stroke="#c98a00" stroke-width="5" marker-end="url(#mk-sound)"/>
+        <text x="30" y="82" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14" fill="#c98a00">força no pedal</text>
+        <g font-family="Bricolage Grotesque, sans-serif" font-size="13" fill="#4d6670">
+          <text x="50" y="205">cilindro mestre</text>
+          <text x="215" y="178">tubulação com fluido</text>
+          <text x="400" y="208">cilindro da roda</text>
+          <text x="540" y="232">disco</text>
+          <text x="470" y="100">pastilha</text>
+        </g>
+        <text x="20" y="262" font-family="Bricolage Grotesque, sans-serif" font-size="14" fill="#4d6670">frenagem</text>
+        <rect x="100" y="250" width="200" height="16" fill="#fff" stroke="#c9d8d6"/>
+        <rect id="fr-bar" x="100" y="250" height="16" width="0" fill="#d62f4b"/>
+      </svg>
+      <div class="controls">
+        <label>Força no pedal <output id="fr-fo"></output><input id="fr-f" type="range" min="0" max="100" step="1" value="70"></label>
+        <button class="btn" id="fr-air" type="button">Entrou ar no sistema</button>
+      </div>
+      <div class="readout" id="fr-out"></div>
+    </figure>
+  </div>
+
+  <div class="grid">
+    <div>
+      <h3>Erros comuns</h3>
+      <ul class="steps errs">
+        <li><b>“A pressão é igual em todo o fluido.”</b> Não: o que se transmite igual é o <em>acréscimo</em>. A pressão total ainda varia com a profundidade.</li>
+        <li><b>“Pascal multiplica energia.”</b> Não: multiplica <em>força</em>; o deslocamento diminui na mesma proporção e o trabalho é o mesmo.</li>
+        <li><b>Confundir força com pressão.</b> A pressão é igual nos dois êmbolos; a força é proporcional à área.</li>
+        <li><b>Usar diâmetros no lugar de áreas.</b> A = πr², então F<sub>2</sub>/F<sub>1</sub> = (D<sub>2</sub>/D<sub>1</sub>)².</li>
+        <li><b>Misturar unidades.</b> Use cm² com cm² e N com N, ou converta tudo para o SI.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Exercício guiado</h3>
+      <p class="q">Numa prensa hidráulica, o êmbolo menor tem 10 cm² e o maior 400 cm². Que força deve ser aplicada no menor para equilibrar um carro de 8000 N no maior? Se o menor desce 20 cm, quanto sobe o maior?</p>
+      <details class="ex"><summary>Ver resolução</summary><div class="body">
+        <ol>
+          <li>F<sub>1</sub> = F<sub>2</sub> · (A<sub>1</sub>/A<sub>2</sub>) = 8000 · (10/400) = <span class="ans">200 N</span>.</li>
+          <li>d<sub>2</sub> = d<sub>1</sub> · (A<sub>1</sub>/A<sub>2</sub>) = 20 · (10/400) = <span class="ans">0,5 cm</span>.</li>
+          <li>Conferência pelo trabalho: 200 · 0,20 = 40 J e 8000 · 0,005 = 40 J ✔</li>
+        </ol></div></details>
+      <p class="note"><b>Resumo:</b> Δp se transmite integralmente · F<sub>1</sub>/A<sub>1</sub> = F<sub>2</sub>/A<sub>2</sub> · força multiplicada, deslocamento dividido, trabalho conservado.</p>
+    </div>
+  </div>
+    <h3 class="exh">Exercícios</h3><div id="ex-pascal"></div>
+  </section>
+
+  <section class="chap" id="arquimedes" data-topic="arquimedes">
+    <div class="chap-head"><h2>Empuxo (Arquimedes)</h2></div>
+    <div class="grid">
+      <div>
+        <ul class="rev">
+          <li>O fluido empurra o corpo imerso para cima com o <b>peso do fluido deslocado</b>: <b>E = d<sub>fluido</sub>·V<sub>imerso</sub>·g</b>.</li>
+          <li>E &gt; P sobe; E = P equilíbrio; E &lt; P afunda.</li>
+          <li>Flutuando: E = P, e a fração imersa é d<sub>corpo</sub> / d<sub>fluido</sub>.</li>
+          <li>Peso aparente: <b>P<sub>ap</sub> = P − E</b> (leitura do dinamômetro).</li>
+        </ul>
+        <p class="note"><b>Pegadinha:</b> o empuxo depende do fluido e do volume imerso, <b>não</b> da massa nem da densidade do corpo.</p>
+      </div>
+      <figure class="lab">
+      <svg id="ar-svg" viewBox="0 0 600 400" role="img" aria-label="Cubo caindo em um tanque, com setas de peso e empuxo">
+        <rect width="600" height="400" fill="#eef3f1"/>
+        <line id="ar-string" stroke="#12232b" stroke-width="2" visibility="hidden"/>
+        <rect id="ar-cube" fill="#12485c" stroke="#0a2533" stroke-width="2"/>
+        <rect id="ar-liq" x="150" y="170" width="300" height="200" fill="#1f7a8c" opacity=".55"/>
+        <path d="M150 100 V370 H450 V100" fill="none" stroke="#12232b" stroke-width="4"/>
+        <line x1="150" x2="450" y1="170" y2="170" stroke="#0a2533" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <line id="ar-P" stroke="#d62f4b" stroke-width="5" marker-end="url(#mk-peso)"/>
+        <line id="ar-E" stroke="#12a37f" stroke-width="5" marker-end="url(#mk-empuxo)"/>
+        <text id="ar-Pt" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="16" fill="#d62f4b">P</text>
+        <text id="ar-Et" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="16" fill="#0b7a5e">E</text>
+      </svg>
+      <div class="controls">
+        <label>Densidade do corpo <output id="ar-do"></output><input id="ar-d" type="range" min="0" max="100" step="1" value="48"></label>
+        <label>Fluido
+          <select id="ar-fl">
+            <option value="1000">Água (1000)</option>
+            <option value="1030">Água do mar (1030)</option>
+            <option value="800">Óleo (800)</option>
+            <option value="13600">Mercúrio (13 600)</option>
+          </select>
+        </label>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:end">
+          <button class="btn" data-d="240">Cortiça</button>
+          <button class="btn" data-d="920">Gelo</button>
+          <button class="btn" data-d="2700">Alumínio</button>
+          <button class="btn" data-d="7800">Ferro</button>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:end">
+          <button class="btn on" id="ar-drop" type="button">Soltar</button>
+          <button class="btn" id="ar-held" type="button">Dinamômetro</button>
+        </div>
+      </div>
+      <div class="readout" id="ar-out"></div>
+    </figure>
+    </div>
+  <div class="grid">
+    <div>
+      <h3>O enunciado</h3>
+      <p class="enunciado"><b>Princípio de Arquimedes:</b> todo corpo total ou parcialmente imerso em um fluido em equilíbrio recebe uma força vertical, para cima, igual ao <em>peso do fluido que ele desloca</em>. É o <b>empuxo</b>.</p>
+      <div class="formula" style="font-size:1.4rem">E = d<sub>f</sub> · V<sub>desl</sub> · g</div>
+      <p class="legend"><span><i>E</i> empuxo (N)</span><span><i>d<sub>f</sub></i> densidade do fluido (kg/m³)</span><span><i>V<sub>desl</sub></i> volume de fluido deslocado (m³)</span><span><i>g</i> aceleração da gravidade (m/s²)</span></p>
+      <p class="note"><b>Cuidado:</b> “deslocado” é o volume da parte que está <em>dentro</em> do fluido, não o volume total do corpo.</p>
+    </div>
+    <figure class="lab">
+      <svg id="ae-svg" viewBox="0 0 600 340" role="img" aria-label="Cubo submerso com a força da pressão em cada face e um gráfico mostrando que a diferença entre baixo e cima é o empuxo">
+        <rect width="600" height="340" fill="#eef3f1"/>
+        <rect x="40" y="60" width="260" height="270" fill="#1f7a8c" opacity=".5"/>
+        <path d="M40 40 V330 H300 V40" fill="none" stroke="#12232b" stroke-width="4"/>
+        <line x1="40" x2="300" y1="60" y2="60" stroke="#0a2533" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <line id="ae-al" stroke="#4d6670" stroke-width="3" marker-end="url(#mk-ink)"/>
+        <line id="ae-ar" stroke="#4d6670" stroke-width="3" marker-end="url(#mk-ink)"/>
+        <rect id="ae-cube" fill="#d9b56c" stroke="#12232b" stroke-width="2"/>
+        <line id="ae-at" stroke="#c98a00" stroke-width="3" marker-end="url(#mk-sound)"/>
+        <line id="ae-ab" stroke="#c98a00" stroke-width="3" marker-end="url(#mk-sound)"/>
+        <text id="ae-tt" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14" fill="#8a6a10">F cima</text>
+        <text id="ae-tb" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14" fill="#8a6a10">F baixo</text>
+        <g font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14" fill="#12232b">
+          <text x="330" y="84" id="ae-l1"></text>
+          <text x="330" y="144" id="ae-l2"></text>
+          <text x="330" y="214" id="ae-l3"></text>
+        </g>
+        <rect id="ae-b1a" x="330" y="92" height="26" fill="#f0b429"/>
+        <rect id="ae-b1b" y="92" height="26" fill="#12a37f"/>
+        <rect id="ae-b2" x="330" y="152" height="26" fill="#f0b429"/>
+        <rect id="ae-b3" x="330" y="222" height="26" width="50" fill="#12a37f"/>
+        <text x="330" y="276" font-family="Bricolage Grotesque, sans-serif" font-size="13" fill="#4d6670">As forças dos lados se anulam.</text>
+        <text x="330" y="296" font-family="Bricolage Grotesque, sans-serif" font-size="13" fill="#4d6670">Sobra a diferença entre baixo e cima.</text>
+      </svg>
+      <div class="controls">
+        <label>Profundidade da face de cima <output id="ae-ho"></output><input id="ae-h" type="range" min="0" max="18" step="1" value="6"></label>
+        <button class="btn" id="ae-play" type="button">Afundar o cubo</button>
+      </div>
+      <div class="readout" id="ae-out"></div>
+    </figure>
+  </div>
+
+  <div class="grid">
+    <div>
+      <h3>Boia, afunda ou fica em equilíbrio?</h3>
+      <p>Como P = d<sub>corpo</sub>·V·g e E<sub>máx</sub> = d<sub>fluido</sub>·V·g, basta comparar as densidades:</p>
+      <table class="tbl">
+        <thead><tr><th>Densidades</th><th>O que acontece</th></tr></thead>
+        <tbody>
+          <tr><td>d<sub>corpo</sub> &lt; d<sub>fluido</sub></td><td>Flutua, com fração imersa d<sub>corpo</sub>/d<sub>fluido</sub>.</td></tr>
+          <tr><td>d<sub>corpo</sub> = d<sub>fluido</sub></td><td>Equilíbrio em qualquer profundidade.</td></tr>
+          <tr><td>d<sub>corpo</sub> &gt; d<sub>fluido</sub></td><td>Afunda: P &gt; E.</td></tr>
+        </tbody>
+      </table>
+      <div class="formula" style="font-size:1.4rem">P<sub>aparente</sub> = P − E<small>o que o dinamômetro marca com o corpo submerso</small></div>
+      <p class="legend"><span><i>P<sub>aparente</sub></i> peso aparente (N)</span><span><i>P</i> peso real do corpo (N)</span><span><i>E</i> empuxo (N)</span></p>
+    </div>
+    <figure class="lab">
+      <svg id="af-svg" viewBox="0 0 600 300" role="img" aria-label="Três blocos soltos na água: a cortiça flutua, o bloco de mesma densidade fica parado no meio e o ferro afunda">
+        <rect width="600" height="300" fill="#eef3f1"/>
+        <rect x="20" y="100" width="560" height="150" fill="#1f7a8c" opacity=".5"/>
+        <rect id="af-b0" width="56" height="56" fill="#c9a066" stroke="#12232b" stroke-width="2"/>
+        <rect id="af-b1" width="56" height="56" fill="#8fb8c4" stroke="#12232b" stroke-width="2"/>
+        <rect id="af-b2" width="56" height="56" fill="#4b5a63" stroke="#12232b" stroke-width="2"/>
+        <path d="M20 60 V250 H580 V60" fill="none" stroke="#12232b" stroke-width="4"/>
+        <line x1="20" x2="580" y1="100" y2="100" stroke="#0a2533" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <g font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14" fill="#12232b" text-anchor="middle">
+          <text x="110" y="274">Cortiça · 240 kg/m³</text>
+          <text x="300" y="274">Mesma densidade · 1000</text>
+          <text x="490" y="274">Ferro · 7800 kg/m³</text>
+        </g>
+        <g font-family="Bricolage Grotesque, sans-serif" font-size="13" fill="#4d6670" text-anchor="middle">
+          <text x="110" y="292">flutua: 24 % imerso</text>
+          <text x="300" y="292">equilíbrio: E = P</text>
+          <text x="490" y="292">afunda: P &gt; E</text>
+        </g>
+      </svg>
+      <div class="controls"><button class="btn" id="af-replay" type="button">Soltar de novo</button></div>
+    </figure>
+  </div>
+
+  <div class="grid">
+    <div>
+      <h3>Onde aparece no dia a dia</h3>
+      <ul class="chips">
+        <li>Navio de aço</li><li>Submarino</li><li>Balão de ar quente</li><li>Densímetro</li><li>Iceberg (≈ 89 % submerso)</li><li>Bexiga natatória do peixe</li>
+      </ul>
+      <p>Todos mudam a <b>densidade média</b> ou o volume deslocado. Um navio de aço flutua porque o casco é oco: o conjunto (aço + ar) é menos denso que a água.</p>
+      <p class="note"><b>Experimente:</b> encha os tanques do submarino até a densidade média passar de 1000 kg/m³. Com os tanques pela metade, ele fica parado.</p>
+    </div>
+    <figure class="lab">
+      <svg id="sb-svg" viewBox="0 0 600 340" role="img" aria-label="Submarino que sobe ou desce conforme a quantidade de água nos tanques de lastro">
+        <rect width="600" height="340" fill="#eef3f1"/>
+        <rect x="0" y="60" width="600" height="280" fill="#1f7a8c" opacity=".5"/>
+        <line x1="0" x2="600" y1="60" y2="60" stroke="#0a2533" stroke-width="1.5" stroke-dasharray="6 5"/>
+        <text x="12" y="52" font-family="Bricolage Grotesque, sans-serif" font-size="13" fill="#4d6670">superfície</text>
+        <g id="sb-sub" transform="translate(300 86)">
+          <rect x="-18" y="-50" width="36" height="26" rx="4" fill="#c4ccd0" stroke="#12232b" stroke-width="3"/>
+          <ellipse rx="100" ry="32" fill="#c4ccd0" stroke="#12232b" stroke-width="3"/>
+          <polygon points="98,0 120,-14 120,14" fill="#98a4ab" stroke="#12232b" stroke-width="2"/>
+          <rect x="-82" y="-14" width="52" height="28" fill="#fff" stroke="#12232b" stroke-width="2"/>
+          <rect x="30" y="-14" width="52" height="28" fill="#fff" stroke="#12232b" stroke-width="2"/>
+          <rect id="sb-t1" x="-80" width="48" fill="#1f7a8c"/>
+          <rect id="sb-t2" x="32" width="48" fill="#1f7a8c"/>
+        </g>
+        <g id="sb-bubs"></g>
+      </svg>
+      <div class="controls">
+        <label>Água nos tanques de lastro <output id="sb-fo"></output><input id="sb-fill" type="range" min="0" max="100" step="1" value="0"></label>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:end">
+          <button class="btn" id="sb-in" type="button">Encher tanques</button>
+          <button class="btn" id="sb-out" type="button">Esvaziar com ar</button>
+        </div>
+      </div>
+      <div class="readout" id="sb-out-r"></div>
+    </figure>
+  </div>
+
+  <div class="grid">
+    <div>
+      <h3>Erros comuns</h3>
+      <ul class="steps errs">
+        <li><b>“Objeto pesado afunda.”</b> O que decide é a <em>densidade</em>: um navio pesadíssimo flutua e um prego leve afunda.</li>
+        <li><b>“O empuxo depende do peso do corpo.”</b> Depende só de d<sub>fluido</sub>, V<sub>desl</sub> e g. Dois corpos de mesmo volume, um de ferro e um de isopor, totalmente imersos, sofrem o mesmo empuxo.</li>
+        <li><b>Usar o volume total quando o corpo flutua.</b> Na flutuação conta só o volume <em>imerso</em>.</li>
+        <li><b>“Mais fundo, mais empuxo.”</b> Depois de totalmente imerso, o empuxo não muda com a profundidade.</li>
+        <li><b>Esquecer a conversão:</b> 1 g/cm³ = 1000 kg/m³ e 1 L = 10⁻³ m³.</li>
+        <li><b>Em flutuação, E = P, não E &gt; P.</b> Se E fosse maior, o corpo ainda estaria subindo.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Exercício guiado</h3>
+      <p class="q">Um bloco de madeira de densidade 600 kg/m³ e volume 2 · 10⁻³ m³ flutua na água (1000 kg/m³). Calcule (a) o empuxo, (b) o volume imerso e (c) a força vertical necessária para mantê-lo totalmente submerso. Use g = 10 m/s².</p>
+      <details class="ex"><summary>Ver resolução</summary><div class="body">
+        <ol>
+          <li><b>(a)</b> O empuxo depende só do volume <b>imerso</b>: E = d<sub>água</sub> · V<sub>imerso</sub> · g. Quem flutua afunda a fração d<sub>bloco</sub> / d<sub>água</sub> = 600 / 1000 = 0,6, ou seja, 60 % do volume: V<sub>imerso</sub> = 0,6 · 2·10⁻³ = 1,2·10⁻³ m³. Então E = 1000 · 1,2·10⁻³ · 10 = <span class="ans">12 N</span>.<br>Conferência: o peso é P = 600 · 2·10⁻³ · 10 = 12 N, e flutuando em repouso E = P. Bate.</li>
+          <li><b>(b)</b> Já calculado no passo anterior: V<sub>imerso</sub> = 1,2·10⁻³ m³, que é <span class="ans">60 % do volume</span> do bloco.</li>
+          <li><b>(c)</b> Totalmente submerso, o volume deslocado passa a ser o volume inteiro: E<sub>máx</sub> = 1000 · 2·10⁻³ · 10 = 20 N. A força para baixo é F = E<sub>máx</sub> − P = 20 − 12 = <span class="ans">8 N</span>.</li>
+        </ol></div></details>
+      <p class="note"><b>Resumo:</b> E = d<sub>f</sub>·V<sub>desl</sub>·g · boia se d<sub>corpo</sub> &lt; d<sub>f</sub> · P<sub>aparente</sub> = P − E · o empuxo não depende da densidade do corpo.</p>
+    </div>
+  </div>
+    <h3 class="exh">Exercícios</h3><div id="ex-arquimedes"></div>
+  </section>
+
+  <section class="chap" id="torricelli" data-topic="torricelli">
+    <div class="chap-head"><h2>Bônus: Torricelli</h2></div>
+    <div class="grid">
+      <div>
+        <ul class="rev">
+          <li>A pressão atmosférica sustenta uma coluna de líquido num tubo fechado em cima: <b>p<sub>atm</sub> = d·g·H</b>.</li>
+          <li>Com mercúrio: 76 cm. Com água, 13,6 vezes mais: ≈ 10,3 m.</li>
+          <li>Subindo a montanha, a pressão cai e a coluna <b>diminui</b>.</li>
+        </ul>
+      </div>
+      <figure class="lab">
+      <svg id="to-svg" viewBox="0 0 600 400" role="img" aria-label="Tubo de Torricelli com coluna de líquido sustentada pela pressão atmosférica">
+        <rect width="600" height="400" fill="#eef3f1"/>
+        <g id="to-arrows"></g>
+        <rect x="150" y="345" width="300" height="40" fill="#98a4ab" id="to-cuba"/>
+        <path d="M150 335 V385 H450 V335" fill="none" stroke="#12232b" stroke-width="4"/>
+        <rect id="to-vac" x="282" y="30" width="36" fill="#fff" stroke="none"/>
+        <rect id="to-col" x="282" width="36" fill="#98a4ab"/>
+        <path d="M280 30 V345 M320 30 V345" stroke="#12232b" stroke-width="4" fill="none"/>
+        <path d="M280 30 H320" stroke="#12232b" stroke-width="4"/>
+        <text x="338" y="70" font-family="Bricolage Grotesque, sans-serif" font-size="14" fill="#4d6670">vácuo</text>
+        <line id="to-dim" x1="352" x2="352" stroke="#12232b" stroke-width="2" marker-end="url(#mk-ink)"/>
+        <text id="to-dimt" x="362" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="16" fill="#12232b"></text>
+        <text x="24" y="40" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="14" fill="#4d6670">p<tspan font-size="10" dy="3">atm</tspan><tspan dy="-3"> sobre a cuba</tspan></text>
+      </svg>
+      <div class="controls">
+        <label>Altitude <output id="to-ho"></output><input id="to-h" type="range" min="0" max="5000" step="100" value="0"></label>
+        <label>Líquido
+          <select id="to-fl">
+            <option value="13600">Mercúrio (13 600 kg/m³)</option>
+            <option value="1000">Água (1000 kg/m³)</option>
+          </select>
+        </label>
+      </div>
+      <div class="readout" id="to-out"></div>
+    </figure>
+    </div>
+    <h3 class="exh">Exercícios</h3><div id="ex-torricelli"></div>
+  </section>
+  <section class="chap" id="simulado" data-topic="simulado">
+    <div class="chap-head"><h2>Simulado</h2></div>
+    <p class="note">25 questões: as 15 primeiras no estilo da P1 (12 de múltipla escolha e 3 discursivas) e 10 de nível desafio no final (8 de múltipla escolha e 2 discursivas). g = 10 m/s², d<sub>água</sub> = 1000 kg/m³, p₀ = 1,0·10⁵ Pa. Marque as respostas, resolva as discursivas no caderno e clique em “Conferir respostas”: o gabarito comentado aparece logo abaixo de cada questão.</p>
+    <div id="sim-list"></div>
+    <div class="sim-actions"><button class="btn on" id="sim-check" type="button">Conferir respostas</button> <button class="btn" id="sim-reset" type="button">Refazer</button></div>
+    <p class="sim-score" id="sim-score" aria-live="polite"></p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Estrutura inspirada em: <a href="https://phet.colorado.edu/pt_BR/simulations/under-pressure">PhET “Sob Pressão”</a> (explorar variando um parâmetro por vez), <a href="https://www.todamateria.com.br/hidrostatica/">Toda Matéria</a> (teoria → fórmula → exercícios), <a href="https://blogdoenem.com.br/simulado-online-de-fisica-para-o-enem-10-questoes-sobre-hidrostatica/">Blog do ENEM</a> (simulado com retorno por questão), <a href="https://plataformaassaad.com.br/questao-73-caderno-azul-enem-2011-comum/">Plataforma Assaad</a> (resolução com “ponto de atenção”) e applets de hidrostática da <a href="https://www2.unesp.br/proex/congressos/5congresso/fscommand/web/docs/405.pdf">UNESP</a>. Nenhum conteúdo foi copiado.</p>
+  <p>Provas reais citadas: ENEM 2011 (caderno azul, q. 73), ENEM 2013 (caderno azul, q. 57 e q. 61) e ENEM PPL 2010 (caderno azul, q. 65), conferidas em resoluções públicas; enunciados adaptados. Questões de desafio: Espcex (Aman) 2015, Unesp 2015, ITA 2013, Epcar (Afa) 2013 e 2015, Escola Naval 2014 e PUC-Rio 2012, com enunciados adaptados e respostas recalculadas.</p>
+</footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const fmt = (n, d = 0) => n.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d });
+const set = (el, attrs) => { for (const k in attrs) el.setAttribute(k, attrs[k]); return el; };
+const NS = "http://www.w3.org/2000/svg";
+const mk = (tag, attrs) => set(document.createElementNS(NS, tag), attrs || {});
+const G = 10; // m/s²
+
+/* ---------- 1. Pressão ---------- */
+(function pressao() {
+  const f = $("pr-f"), a = $("pr-a");
+  function draw() {
+    const F = +f.value, Acm = +a.value, A = Acm * 1e-4, p = F / A;
+    $("pr-fo").textContent = F + " N";
+    $("pr-ao").textContent = Acm + " cm²";
+    const w = 14 + 90 * Math.sqrt(Acm / 400) * 1.0, cx = 400;
+    const dent = clamp(6 + 9 * (Math.log10(p) - 3), 2, 55);
+    const x1 = cx - w / 2, x2 = cx + w / 2, gy = 230;
+    set($("pr-sand"), { d: `M0 300 L0 ${gy} L${x1} ${gy} L${x1} ${gy + dent} L${x2} ${gy + dent} L${x2} ${gy} L600 ${gy} L600 300Z` });
+    const top = gy + dent - 60;
+    set($("pr-block"), { x: x1, y: top, width: w, height: 60 });
+    const len = 20 + 0.12 * F;
+    set($("pr-arrow"), { x1: cx, x2: cx, y1: top - 6 - len, y2: top - 4 });
+    set($("pr-flabel"), { x: cx + 14, y: top - 6 - len + 14 });
+    $("pr-flabel").textContent = "F = " + F + " N";
+    $("pr-bar").setAttribute("width", 200 * clamp((Math.log10(p) - 3.5) / 3.5, 0.02, 1));
+    $("pr-out").innerHTML = `p = F / A = ${F} N / ${fmt(A, 4)} m² <br><span class="big">${fmt(Math.round(p))} Pa</span> <span class="k">≈ ${fmt(p / 1e5, p < 1e5 ? 2 : 1)} atm</span>`;
+  }
+  f.oninput = a.oninput = draw;
+  document.querySelectorAll("#pressao [data-f]").forEach(b => b.onclick = () => { f.value = b.dataset.f; a.value = b.dataset.a; draw(); });
+  draw();
+})();
+
+/* ---------- 2. Densidade ---------- */
+(function densidade() {
+  const m = $("de-m"), v = $("de-v"), dots = $("de-dots");
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pts = Array.from({ length: 200 }, () => [rnd(), rnd()]);
+  function draw() {
+    const M = +m.value, V = +v.value;
+    $("de-mo").textContent = M + " g";
+    $("de-vo").textContent = V + " cm³";
+    const s = 50 + 130 * Math.cbrt(V / 500), bx = 300 - s / 2, by = 140 - s / 2;
+    set($("de-box"), { x: bx, y: by, width: s, height: s });
+    const n = Math.round(M / 10);
+    dots.textContent = "";
+    for (let i = 0; i < n; i++) dots.appendChild(mk("circle", { cx: bx + 7 + pts[i][0] * (s - 14), cy: by + 7 + pts[i][1] * (s - 14), r: 3 }));
+    const d = M / V;
+    const st = d > 1.005 ? ["afunda", "afunda"] : d < 0.995 ? ["sobe", "flutua"] : ["eq", "fica em equilíbrio"];
+    $("de-water").textContent = "";
+    $("de-out").innerHTML = `d = m / V = ${M} g / ${V} cm³ <br><span class="big">${fmt(d, 2)} g/cm³ = ${fmt(d * 1000)} kg/m³</span><br>Na água (1,00 g/cm³) o corpo <span class="pill ${st[0]}">${st[1]}</span>`;
+  }
+  m.oninput = v.oninput = draw;
+  draw();
+})();
+
+/* ---------- 3a. Stevin ---------- */
+(function stevin() {
+  const h = $("st-h"), fl = $("st-fl"), atm = $("st-atm"), svg = $("st-svg");
+  const Y0 = 70, PX = 28, CX = 300;
+  const colors = { 1000: ["#1f7a8c", .55], 800: ["#e0b04a", .6], 13600: ["#98a4ab", .9] };
+  // régua
+  const ticks = $("st-ticks");
+  for (let i = 0; i <= 10; i++) {
+    ticks.appendChild(mk("line", { x1: 134, x2: 146, y1: Y0 + i * PX, y2: Y0 + i * PX, stroke: "#12232b" }));
+    const t = mk("text", { x: 126, y: Y0 + i * PX + 4, "text-anchor": "end" }); t.textContent = i + " m"; ticks.appendChild(t);
+  }
+  const dirs = [0, 45, 90, 135, 180, 225, 270, 315];
+  const arrows = $("st-arrows");
+  dirs.forEach(() => arrows.appendChild(mk("line", { stroke: "#c98a00", "stroke-width": 4, "marker-end": "url(#mk-sound)" })));
+  const p0g = $("st-p0");
+  for (let i = 0; i < 7; i++) p0g.appendChild(mk("line", { x1: 160 + i * 47, x2: 160 + i * 47, y1: 38, y2: 64, stroke: "#4d6670", "stroke-width": 3, "marker-end": "url(#mk-ink)" }));
+  const p0t = mk("text", { x: 300, y: 24, "text-anchor": "middle", "font-family": "Bricolage Grotesque, sans-serif", "font-size": 14, "font-weight": 700, fill: "#4d6670" });
+  p0t.textContent = "p₀ (ar)"; p0g.appendChild(p0t);
+
+  function draw() {
+    const H = +h.value, d = +fl.value, useAtm = atm.checked;
+    const [c, o] = colors[d];
+    set($("st-liq"), { fill: c, opacity: o });
+    p0g.style.display = useAtm ? "" : "none";
+    const ph = d * G * H, p = ph + (useAtm ? 1e5 : 0);
+    const cy = Y0 + H * PX;
+    $("st-probe").setAttribute("transform", `translate(${CX} ${cy})`);
+    const L = p > 0 ? 12 + 22 * Math.sqrt(p / 1e5) : 0;
+    [...arrows.children].forEach((ln, i) => {
+      const a = dirs[i] * Math.PI / 180, c1 = Math.cos(a), s1 = Math.sin(a);
+      set(ln, { x1: c1 * (12 + L), y1: s1 * (12 + L), x2: c1 * 13, y2: s1 * 13, visibility: p > 0 ? "visible" : "hidden" });
+    });
+    $("st-ho").textContent = fmt(H, 1) + " m";
+    const body = useAtm
+      ? `p = p₀ + d·g·h = 100 000 + ${fmt(d)}·10·${fmt(H, 1)}`
+      : `p = d·g·h = ${fmt(d)}·10·${fmt(H, 1)}`;
+    $("st-out").innerHTML = `${body}<br><span class="big">${fmt(Math.round(p))} Pa</span> <span class="k">≈ ${fmt(p / 1e5, 2)} atm · só do líquido: ${fmt(Math.round(ph))} Pa</span>`;
+  }
+  h.oninput = fl.onchange = atm.onchange = draw;
+  function fromPointer(e) {
+    const r = svg.getBoundingClientRect(), y = (e.clientY - r.top) * (380 / r.height);
+    h.value = clamp(Math.round((y - Y0) / PX * 10) / 10, 0, 10); draw();
+  }
+  let drag = false;
+  svg.addEventListener("pointerdown", e => { drag = true; svg.setPointerCapture(e.pointerId); fromPointer(e); });
+  svg.addEventListener("pointermove", e => { if (drag) fromPointer(e); });
+  svg.addEventListener("pointerup", () => drag = false);
+  draw();
+})();
+
+/* ---------- 3b. Vasos comunicantes ---------- */
+(function vasos() {
+  const h = $("vc-h");
+  const arrows = $("vc-arrows");
+  [98, 265, 420].forEach(x => arrows.appendChild(mk("line", { x1: x, x2: x, stroke: "#f0b429", "stroke-width": 5, "marker-end": "url(#mk-sound)" })));
+  function draw() {
+    const H = +h.value, y = 300 - H * 5;
+    set($("vc-water"), { y, height: 340 - y });
+    set($("vc-line"), { y1: y, y2: y });
+    set($("vc-lbl"), { y: y + 4 }); $("vc-lbl").textContent = "h = " + H + " cm";
+    [...arrows.children].forEach(a => set(a, { y1: 296 - H * 3.2, y2: 294 }));
+    $("vc-ho").textContent = H + " cm";
+    const p = 1000 * G * H / 100;
+    $("vc-out").innerHTML = `Nível igual nos 3 vasos. Pressão no fundo de cada um: d·g·h = 1000·10·${fmt(H / 100, 2)}<br><span class="big">${fmt(Math.round(p))} Pa</span> <span class="k">nos três, apesar do formato</span>`;
+  }
+  h.oninput = draw; draw();
+})();
+
+/* ---------- 3c. Tubo em U ---------- */
+(function tubo() {
+  const h = $("ut-h"), d = $("ut-d"), S = 4, YI = 150;
+  function draw() {
+    const ho = +h.value, dO = +d.value, hw = dO * ho / 1000;
+    $("ut-ho").textContent = ho + " cm"; $("ut-do").textContent = dO + " kg/m³";
+    const yo = YI - ho * S, yr = YI - hw * S;
+    set($("ut-wb"), { x: 190, y: 210, width: 220, height: 60 });
+    set($("ut-wl"), { x: 190, y: YI, width: 60, height: 60 });
+    set($("ut-wr"), { x: 350, y: yr, width: 60, height: 210 - yr });
+    set($("ut-oil"), { x: 190, y: yo, width: 60, height: ho * S });
+    set($("ut-bo"), { x1: 168, x2: 168, y1: YI, y2: yo });
+    set($("ut-bw"), { x1: 432, x2: 432, y1: YI, y2: yr });
+    set($("ut-lo"), { x: 20, y: (YI + yo) / 2 + 4 }); $("ut-lo").textContent = "h₁ = " + ho + " cm";
+    set($("ut-lw"), { x: 442, y: (YI + yr) / 2 + 4 }); $("ut-lw").textContent = "h₂ = " + fmt(hw, 1) + " cm";
+    $("ut-out").innerHTML = `d₁·h₁ = d₂·h₂ → ${dO}·${ho} = 1000·h₂<br><span class="big">h₂ = ${fmt(hw, 1)} cm</span> <span class="k">(coluna de água acima da separação)</span>`;
+  }
+  h.oninput = d.oninput = draw; draw();
+})();
+
+/* ---------- 4. Pascal ---------- */
+(function pascal() {
+  const f = $("pa-f"), r = $("pa-r"), dd = $("pa-d"), play = $("pa-play");
+  const TOP = 140, BOT = 300;
+  function draw() {
+    const F1 = +f.value, R = +r.value, d1 = +dd.value;
+    const w1 = 40, w2 = 40 * R, xr = 220 + w2;
+    const d1px = d1 * 4, d2px = d1px / R, T = 14;
+    const p1t = 170 + d1px, p2t = 170 - d2px;
+    set($("pa-wall"), { d: `M60 ${TOP} V330 H${xr} V${TOP} M100 ${TOP} V${BOT} H220 V${TOP}` });
+    set($("pa-p1"), { x: 62, y: p1t, width: w1 - 4, height: T });
+    set($("pa-p2"), { x: 222, y: p2t, width: w2 - 4, height: T });
+    set($("pa-fl1"), { x: 62, y: p1t + T, width: w1 - 4, height: BOT - p1t - T });
+    set($("pa-fl2"), { x: 222, y: p2t + T, width: w2 - 4, height: BOT - p2t - T });
+    set($("pa-fl3"), { x: 62, y: BOT, width: xr - 64, height: 28 });
+    const lw = Math.min(w2 - 20, 130), lx = 220 + w2 / 2;
+    set($("pa-load"), { x: lx - lw / 2, y: p2t - 40, width: lw, height: 40 });
+    set($("pa-loadt"), { x: lx, y: p2t - 15 });
+    const F2 = F1 * R, len1 = 10 + 0.3 * F1, len2 = 14 + 1.5 * Math.sqrt(F2);
+    set($("pa-f1"), { x1: 80, x2: 80, y1: p1t - 4 - len1, y2: p1t - 3 });
+    set($("pa-f1t"), { x: 92, y: p1t - 4 - len1 + 12 }); $("pa-f1t").textContent = "F₁";
+    set($("pa-f2"), { x1: lx, x2: lx, y1: p2t - 44, y2: p2t - 44 - len2 });
+    set($("pa-f2t"), { x: lx + 12, y: p2t - 44 - len2 + 14 }); $("pa-f2t").textContent = "F₂";
+    $("pa-fo").textContent = F1 + " N"; $("pa-ro").textContent = R + "×"; $("pa-do").textContent = d1 + " cm";
+    const d2 = d1 / R, p = F1 / 10e-4, W1 = F1 * d1 / 100, W2 = F2 * d2 / 100;
+    $("pa-out").innerHTML = `A₁ = 10 cm² → p = F₁/A₁ = ${fmt(Math.round(p))} Pa (igual nos dois êmbolos)<br>` +
+      `<span class="big">F₂ = ${fmt(F2)} N</span> <span class="k">· êmbolo maior sobe ${fmt(d2, 1)} cm</span><br>` +
+      `Trabalho: W₁ = ${fmt(W1, 2)} J &nbsp;|&nbsp; W₂ = ${fmt(W2, 2)} J <span class="k">(iguais)</span>`;
+  }
+  f.oninput = r.oninput = dd.oninput = draw;
+  let raf = 0, t0 = 0;
+  function loop(t) {
+    dd.value = Math.round(10 + 10 * Math.sin((t - t0) / 500 - Math.PI / 2)); draw();
+    raf = requestAnimationFrame(loop);
+  }
+  play.onclick = () => {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; play.textContent = "Bombear"; }
+    else { t0 = performance.now(); raf = requestAnimationFrame(loop); play.textContent = "Parar"; }
+  };
+  draw();
+})();
+
+/* ---------- 5. Arquimedes ---------- */
+(function arquimedes() {
+  const ds = $("ar-d"), fl = $("ar-fl"), L = 0.1, PX = 500, SURF = 170, CX = 300, HW = 0.4;
+  let exact = null; // densidade exata vinda de um preset
+  const dens = () => exact ?? Math.round(100 * Math.pow(10, +ds.value / 50) / 10) * 10;
+  let z, v, held = false;
+  const reset = () => { z = held ? 0.2 : -0.25; v = 0; };
+  function readout() {
+    const d = dens(), rf = +fl.value, m = d * L ** 3, V = L ** 3;
+    const s = clamp(z + L / 2, 0, L), E = rf * G * L * L * s, P = m * G;
+    $("ar-do").textContent = fmt(d) + " kg/m³";
+    let st;
+    if (held) st = `Tração no fio (peso aparente): P − E = ${fmt(P, 2)} − ${fmt(E, 2)} = <span class="big">${fmt(P - E, 2)} N</span>`;
+    else {
+      const r = d / rf;
+      const tag = Math.abs(r - 1) < .01 ? '<span class="pill eq">equilíbrio em qualquer profundidade</span>' : r < 1 ? `<span class="pill sobe">flutua</span> <span class="k">com ${fmt(r * 100, 1)} % do volume mergulhado</span>` : '<span class="pill afunda">afunda</span>';
+      st = `Corpo ${fmt(d)} kg/m³ em fluido ${fmt(rf)} kg/m³: ${tag}`;
+    }
+    $("ar-out").innerHTML = `P = m·g = ${fmt(P, 2)} N &nbsp;|&nbsp; E = d<sub>f</sub>·V<sub>desl</sub>·g = ${fmt(E, 2)} N<br>${st}`;
+  }
+  function draw() {
+    const rf = +fl.value, d = dens(), m = d * L ** 3, s = clamp(z + L / 2, 0, L), E = rf * G * L * L * s, P = m * G;
+    const yc = SURF + z * PX, side = L * PX;
+    const shade = clamp(Math.log10(d / 100) / 2, 0, 1); // mais denso, mais escuro
+    set($("ar-cube"), { x: CX - side / 2, y: yc - side / 2, width: side, height: side, fill: `hsl(35 ${55 - 25 * shade}% ${82 - 45 * shade}%)` });
+    const lp = Math.min(4.5 * Math.sqrt(P), 385 - yc), le = Math.min(4.5 * Math.sqrt(E), yc - 12);
+    set($("ar-P"), { x1: CX - 12, x2: CX - 12, y1: yc, y2: yc + lp });
+    set($("ar-Pt"), { x: CX - 40, y: yc + lp + 4 });
+    set($("ar-E"), { x1: CX + 12, x2: CX + 12, y1: yc, y2: yc - Math.max(le, 0.1) });
+    set($("ar-Et"), { x: CX + 20, y: yc - le - 2, visibility: E > 0.01 ? "visible" : "hidden" });
+    $("ar-E").style.visibility = E > 0.01 ? "visible" : "hidden";
+    const sv = $("ar-string");
+    sv.setAttribute("visibility", held ? "visible" : "hidden");
+    set(sv, { x1: CX, x2: CX, y1: 10, y2: yc - side / 2 });
+    set($("ar-liq"), { y: SURF, height: 370 - SURF, fill: rf > 5000 ? "#98a4ab" : rf < 900 ? "#e0b04a" : "#1f7a8c", opacity: rf > 5000 ? .8 : .55 });
+    readout();
+  }
+  let last = 0;
+  function frame(t) {
+    const dt = Math.min(0.033, (t - last) / 1000 || 0.016); last = t;
+    if (!held) {
+      const rf = +fl.value, m = dens() * L ** 3, W = m * G, k = rf * G * L * L;
+      const Efull = rf * G * L ** 3;
+      const zeta = W > Efull ? 2.5 : 0.7, cc = 2 * Math.sqrt(k * m);
+      const N = 40, h = dt * 0.7 / N;
+      for (let i = 0; i < N; i++) {
+        const s = clamp(z + L / 2, 0, L), E = k * s, c = s > 0 ? zeta * cc : 0;
+        v += (W - E - c * v) / m * h; z += v * h;
+        if (z > HW - L / 2) { z = HW - L / 2; v = 0; }
+      }
+    }
+    draw(); requestAnimationFrame(frame);
+  }
+  const restart = () => { reset(); draw(); };
+  ds.oninput = () => { exact = null; restart(); }; fl.onchange = restart;
+  document.querySelectorAll("#arquimedes [data-d]").forEach(b => b.onclick = () => { exact = +b.dataset.d; ds.value = Math.round(50 * Math.log10(exact / 100)); restart(); });
+  const bDrop = $("ar-drop"), bHeld = $("ar-held");
+  bDrop.onclick = () => { held = false; bDrop.classList.add("on"); bHeld.classList.remove("on"); restart(); };
+  bHeld.onclick = () => { held = true; bHeld.classList.add("on"); bDrop.classList.remove("on"); restart(); };
+  reset(); requestAnimationFrame(frame);
+})();
+
+/* ---------- Bônus: Torricelli ---------- */
+(function torricelli() {
+  const h = $("to-h"), fl = $("to-fl"), arrows = $("to-arrows");
+  for (let i = 0; i < 4; i++) arrows.appendChild(mk("line", { x1: 170 + i * 80, x2: 170 + i * 80, stroke: "#4d6670", "stroke-width": 4, "marker-end": "url(#mk-ink)" }));
+  const GT = 9.8, P0 = 101325, TOP = 30, SURF = 345;
+  function draw() {
+    const alt = +h.value, d = +fl.value;
+    const f = Math.exp(-alt / 8400), p = P0 * f, H = p / (d * GT); // metros de coluna
+    const maxH = d === 13600 ? 0.76 : 10.33;
+    const px = (SURF - TOP - 8) * H / maxH; // altura da coluna em pixels
+    const yTop = SURF - px;
+    set($("to-col"), { y: yTop, height: px, fill: d === 13600 ? "#98a4ab" : "#1f7a8c", opacity: d === 13600 ? 1 : .65 });
+    set($("to-cuba"), { fill: d === 13600 ? "#98a4ab" : "#1f7a8c", opacity: d === 13600 ? 1 : .65 });
+    set($("to-vac"), { y: TOP, height: Math.max(0, yTop - TOP) });
+    [...arrows.children].forEach(a => { const L = 10 + 60 * f; set(a, { y1: 335 - L - 8, y2: 333 }); });
+    set($("to-dim"), { y1: SURF, y2: yTop }); set($("to-dimt"), { y: (SURF + yTop) / 2 + 5 });
+    $("to-dimt").textContent = "H = " + (d === 13600 ? fmt(H * 100, 1) + " cm" : fmt(H, 2) + " m");
+    $("to-ho").textContent = fmt(alt) + " m";
+    $("to-out").innerHTML = `p<sub>atm</sub> = d·g·H = ${fmt(d)}·9,8·${fmt(H, d === 13600 ? 3 : 2)} m <br><span class="big">${fmt(Math.round(p))} Pa</span> <span class="k">≈ ${fmt(p / P0 * 760)} mmHg · ${fmt(f, 2)} atm</span>`;
+  }
+  h.oninput = fl.onchange = draw; draw();
+})();
+
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function visibleLoop(el, step) {
+  let on = false, raf = 0, last = 0;
+  const tick = t => { const dt = clamp((t - last) / 1000 || 0.016, 0, 0.05); last = t; step(dt); raf = requestAnimationFrame(tick); };
+  new IntersectionObserver(es => {
+    const v = es[0].isIntersecting;
+    if (v && !on) { on = true; last = performance.now(); raf = requestAnimationFrame(tick); }
+    else if (!v && on) { on = false; cancelAnimationFrame(raf); }
+  }).observe(el);
+}
+const SANS = "Bricolage Grotesque, sans-serif";
+
+/* ---------- Pascal: o acréscimo chega igual a todos os pontos ---------- */
+(function pascalPressao() {
+  const d = $("pt-d"), play = $("pt-play"), rows = $("pt-rows");
+  const names = ["A", "B", "C", "D"], depths = [0.5, 1, 1.5, 2], BS = 3.4, X0 = 330;
+  const items = depths.map((h, i) => {
+    const y = 70 + h * 100;
+    rows.appendChild(mk("line", { x1: 187, x2: X0, y1: y, y2: y, stroke: "#4d6670", "stroke-dasharray": "3 4" }));
+    rows.appendChild(mk("circle", { cx: 180, cy: y, r: 7, fill: "#f0b429", stroke: "#12232b", "stroke-width": 2 }));
+    const lab = mk("text", { x: 164, y: y + 5, "text-anchor": "end", "font-family": SANS, "font-weight": 700, "font-size": 14, fill: "#12232b" });
+    lab.textContent = names[i]; rows.appendChild(lab);
+    const base = mk("rect", { x: X0, y: y - 12, height: 24, fill: "#1f7a8c" });
+    const inc = mk("rect", { y: y - 12, height: 24, fill: "#f0b429" });
+    const val = mk("text", { y: y + 5, "font-family": SANS, "font-weight": 700, "font-size": 14, fill: "#12232b" });
+    rows.append(base, inc, val);
+    return { b: 10 * h, base, inc, val };
+  });
+  function draw() {
+    const D = +d.value, len = 8 + D;
+    $("pt-do").textContent = D + " kPa";
+    set($("pt-f"), { y1: 52 - len });
+    set($("pt-ft"), { y: 52 - len + 14 });
+    items.forEach(it => {
+      set(it.base, { width: it.b * BS });
+      set(it.inc, { x: X0 + it.b * BS, width: D * BS });
+      set(it.val, { x: X0 + (it.b + D) * BS + 8 });
+      it.val.textContent = fmt(it.b + D) + " kPa";
+    });
+    $("pt-out").innerHTML = `Δp aplicado no êmbolo: ${D} kPa<br><span class="big">cada ponto ganha +${D} kPa</span> <span class="k">· total (A, B, C, D) = ${items.map(it => fmt(it.b + D)).join(" · ")} kPa</span>`;
+  }
+  let raf = 0, t0 = 0;
+  const loop = t => { d.value = Math.round(20 + 20 * Math.sin((t - t0) / 600 - Math.PI / 2)); draw(); raf = requestAnimationFrame(loop); };
+  play.onclick = () => {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; play.textContent = "Empurrar o êmbolo"; }
+    else { t0 = performance.now(); raf = requestAnimationFrame(loop); play.textContent = "Parar"; }
+  };
+  d.oninput = draw; draw();
+})();
+
+/* ---------- Pascal: freio hidráulico, com e sem ar ---------- */
+(function freio() {
+  const f = $("fr-f"), airB = $("fr-air");
+  let air = false;
+  function draw() {
+    const F = +f.value;
+    const dm = F * 0.3 * (air ? 1.8 : 1);       // curso do pedal
+    const raw = F * (air ? 0.55 : 0.8);          // deslocamento "pedido" ao êmbolo da roda
+    const ds = Math.min(44, raw);                // a pastilha para ao tocar o disco
+    const force = clamp((raw - 44) / 36, 0, 1);
+    set($("fr-mp"), { x: 55 + dm });
+    set($("fr-rod"), { x2: 55 + dm });
+    set($("fr-mfl"), { x: 65 + dm, width: 85 - dm });
+    set($("fr-sp"), { x: 470 + ds });
+    set($("fr-sfl"), { width: 68 + ds });
+    set($("fr-pad"), { x: 482 + ds, fill: force > 0 ? "#d62f4b" : "#8a6a10" });
+    set($("fr-bub"), { visibility: air ? "visible" : "hidden", r: 11 - F * 0.06 });
+    set($("fr-fa"), { x2: 50 + F * 0.7 });
+    set($("fr-bar"), { width: 200 * force });
+    $("fr-fo").textContent = F + " %";
+    const msg = air
+      ? "A bolha de ar é comprimida e engole o curso do pedal: o pedal afunda e a pastilha mal aperta."
+      : "O líquido é incompressível: a pressão chega inteira à roda e a pastilha aperta o disco.";
+    $("fr-out").innerHTML = `Frenagem: <span class="big">${fmt(Math.round(force * 100))} %</span> <span class="k">· curso do pedal ${fmt(Math.round(dm))} mm</span><br>${msg}`;
+  }
+  f.oninput = draw;
+  airB.onclick = () => { air = !air; airB.classList.toggle("on", air); airB.textContent = air ? "Tirar o ar (sangrar)" : "Entrou ar no sistema"; draw(); };
+  draw();
+})();
+
+/* ---------- Arquimedes: de onde vem o empuxo ---------- */
+(function empuxoOrigem() {
+  const h = $("ae-h"), play = $("ae-play");
+  const S = 6, SURF = 60, CX = 170, SIDE = 60, K = 3, KB = 5, X0 = 330;
+  function draw() {
+    const H = +h.value, Fc = H, Fb = H + 10, E = 10;
+    const yt = SURF + H * S, yb = yt + SIDE, ym = yt + SIDE / 2;
+    const lt = K * Fc, lb = K * Fb, ll = K * (H + 5);
+    set($("ae-cube"), { x: CX - SIDE / 2, y: yt, width: SIDE, height: SIDE });
+    set($("ae-at"), { x1: CX, x2: CX, y1: yt - lt, y2: yt - 2, visibility: lt > 4 ? "visible" : "hidden" });
+    set($("ae-ab"), { x1: CX, x2: CX, y1: yb + lb, y2: yb + 2 });
+    set($("ae-al"), { x1: CX - SIDE / 2 - ll, x2: CX - SIDE / 2 - 2, y1: ym, y2: ym });
+    set($("ae-ar"), { x1: CX + SIDE / 2 + ll, x2: CX + SIDE / 2 + 2, y1: ym, y2: ym });
+    set($("ae-tt"), { x: CX + 16, y: yt - lt / 2 + 4, visibility: lt > 22 ? "visible" : "hidden" });
+    set($("ae-tb"), { x: CX + 16, y: yb + lb / 2 + 4 });
+    set($("ae-b1a"), { width: Fc * KB });
+    set($("ae-b1b"), { x: X0 + Fc * KB, width: E * KB });
+    set($("ae-b2"), { width: Fc * KB });
+    $("ae-l1").textContent = `F baixo = ${Fb} N`;
+    $("ae-l2").textContent = `F cima = ${Fc} N`;
+    $("ae-l3").textContent = `E = ${Fb} − ${Fc} = ${E} N`;
+    $("ae-ho").textContent = H + " cm";
+    $("ae-out").innerHTML = `F<sub>baixo</sub> − F<sub>cima</sub> = ${Fb} − ${Fc} = <span class="big">${E} N</span> <span class="k">= d·V·g · igual em qualquer profundidade</span>`;
+  }
+  let raf = 0, t0 = 0;
+  const loop = t => { h.value = Math.round(9 + 9 * Math.sin((t - t0) / 700 - Math.PI / 2)); draw(); raf = requestAnimationFrame(loop); };
+  play.onclick = () => {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; play.textContent = "Afundar o cubo"; }
+    else { t0 = performance.now(); raf = requestAnimationFrame(loop); play.textContent = "Parar"; }
+  };
+  h.oninput = draw; draw();
+})();
+
+/* ---------- Arquimedes: três corpos soltos na água ---------- */
+(function tresCorpos() {
+  const SURF = 100, FLOOR = 250, S = 56, Y0 = 30;
+  const bodies = [
+    { el: $("af-b0"), cx: 110, yf: SURF + S * 0.24 - S / 2 },
+    { el: $("af-b1"), cx: 300, yf: 170 },
+    { el: $("af-b2"), cx: 490, yf: FLOOR - S / 2 }
+  ];
+  let t = reduceMotion ? 99 : 0;
+  const pos = [
+    (b, t) => b.yf + (Y0 - b.yf) * Math.exp(-2.6 * t) * Math.cos(7 * t) + 1.5 * Math.sin(t * 1.6) * (1 - Math.exp(-0.8 * t)),
+    (b, t) => b.yf + (Y0 - b.yf) * Math.exp(-3 * t),
+    (b, t) => Y0 + (b.yf - Y0) * Math.pow(Math.min(1, t / 1.1), 1.6)
+  ];
+  function draw() { bodies.forEach((b, i) => set(b.el, { x: b.cx - S / 2, y: pos[i](b, t) - S / 2 })); }
+  draw();
+  if (!reduceMotion) visibleLoop($("af-svg"), dt => { t += dt; draw(); });
+  $("af-replay").onclick = () => { t = reduceMotion ? 99 : 0; draw(); };
+})();
+
+/* ---------- Arquimedes: submarino com tanques de lastro ---------- */
+(function submarino() {
+  const sl = $("sb-fill"), grp = $("sb-sub"), svg = $("sb-svg");
+  const SURF = 60, YMAX = 285;
+  let fill = 0, target = 0, y = 86, last = "";
+  const bubs = Array.from({ length: 6 }, (_, i) => $("sb-bubs").appendChild(mk("circle", { r: 3 + (i % 3), fill: "none", stroke: "#e8f1f0", "stroke-width": 1.5, visibility: "hidden" })));
+  const phase = bubs.map((_, i) => i / 6);
+  function render(dt) {
+    const d = 900 + 200 * fill, yeq = SURF + (d / 1000 - 0.5) * 64;
+    y += (d - 1000) * 0.6 * dt;
+    if (d < 1000) y = Math.max(y, yeq);
+    y = clamp(y, 40, YMAX);
+    grp.setAttribute("transform", `translate(300 ${y.toFixed(1)})`);
+    const hw = 28 * fill;
+    [$("sb-t1"), $("sb-t2")].forEach(r => set(r, { y: 14 - hw, height: hw }));
+    const vent = fill > target + 0.001;
+    bubs.forEach((b, i) => {
+      phase[i] = (phase[i] + dt * 0.7) % 1;
+      const top = y - 50, ok = vent && top > SURF + 6;
+      set(b, { visibility: ok ? "visible" : "hidden", cx: 300 + (i - 2.5) * 12 + 4 * Math.sin(phase[i] * 12), cy: top - phase[i] * (top - SURF) });
+    });
+    const st = d < 995 ? (y <= yeq + 1 ? ["sobe", "flutua"] : ["sobe", "sobe"]) : d > 1005 ? ["afunda", "desce"] : ["eq", "fica parado"];
+    const html = `Tanques ${fmt(Math.round(fill * 100))} % cheios → densidade média <span class="big">${fmt(Math.round(d))} kg/m³</span><br>Água: 1000 kg/m³ · o submarino <span class="pill ${st[0]}">${st[1]}</span>`;
+    if (html !== last) { $("sb-out-r").innerHTML = html; last = html; }
+    $("sb-fo").textContent = fmt(Math.round(fill * 100)) + " %";
+  }
+  sl.oninput = () => { fill = target = +sl.value / 100; render(0); };
+  $("sb-in").onclick = () => { target = 1; };
+  $("sb-out").onclick = () => { target = 0; };
+  render(0);
+  if (reduceMotion) { $("sb-in").onclick = () => { fill = target = 1; sl.value = 100; render(0); }; $("sb-out").onclick = () => { fill = target = 0; sl.value = 0; render(0); }; }
+  else visibleLoop(svg, dt => {
+    if (fill !== target) { fill += clamp(target - fill, -0.25 * dt, 0.25 * dt); sl.value = Math.round(fill * 100); }
+    render(dt);
+  });
+})();
+</script>
+<script>
+"use strict";
+/* Exercícios por tópico. g = 10 m/s², d_água = 1000 kg/m³.
+   kind: "real" (prova citada com ano e número), "parcial" (vestibular reproduzido por site de estudo, sem ano/nº,
+         com dados conferidos ou adaptados), "original" (elaborado para esta aula).
+   Cada resolução segue o padrão cobrado na P1: Dados → Fórmula → Conta com unidades → Resposta com unidade.
+   Densidade, pressão e Stevin (variação da pressão com a profundidade) NÃO repetem nenhuma questão do simulado (simulado-data.js). */
+const EXERCISES = {
+  densidade: [
+    { id: "D1", kind: "parcial", src: "PUC, via Projeto Agatha (ano e nº não informados)", title: "Massa de um cubo de ferro",
+      q: "Um cubo maciço de ferro tem aresta de 2,0 cm e densidade de 7,6 g/cm³. Qual é a massa do cubo?",
+      steps: ["<b>Dados:</b> aresta = 2,0 cm; d = 7,6 g/cm³.", "<b>Volume:</b> V = 2,0³ = 8,0 cm³.", "<b>Fórmula:</b> m = d·V.", "<b>Conta:</b> m = 7,6 · 8,0 = 60,8 g ≈ 61 g."],
+      ans: "m ≈ 61 g" },
+    { id: "D2", kind: "parcial", src: "EFOMM, via Projeto Agatha (ano e nº não informados)", title: "Mistura de óleos com massas iguais",
+      q: "Misturam-se massas iguais de dois óleos, de densidades 0,60 g/cm³ e 0,85 g/cm³. Qual a densidade aproximada da mistura? (Cuidado: aqui as <b>massas</b> são iguais, não os volumes.)",
+      steps: ["<b>Dados:</b> m<sub>1</sub> = m<sub>2</sub> = m; d<sub>1</sub> = 0,60; d<sub>2</sub> = 0,85 g/cm³.", "<b>Volumes:</b> V<sub>1</sub> = m/0,60; V<sub>2</sub> = m/0,85.", "<b>Fórmula:</b> d = m<sub>total</sub> / V<sub>total</sub> = 2m / (m/0,60 + m/0,85).", "<b>Conta:</b> d = 2 / (1,667 + 1,176) = 2 / 2,843 ≈ 0,70 g/cm³.", "<b>Atenção:</b> a média simples (0,725) está errada, porque os volumes não são iguais."],
+      ans: "d ≈ 0,70 g/cm³" },
+    { id: "D3", kind: "parcial", src: "UNIVAG 2019-2, via Blog do Vestibular (tabela refeita com valores a 20 °C)", title: "Que líquido é esse?",
+      q: "Tabela de densidades a 20 °C: etanol 0,79 g/mL; benzeno 0,88 g/mL; água 1,00 g/mL; ácido acético 1,05 g/mL; clorofórmio 1,49 g/mL. Uma amostra tem massa de 2,02 g e volume de 1,92 mL. Que líquido é?",
+      steps: ["<b>Dados:</b> m = 2,02 g; V = 1,92 mL = 1,92 cm³.", "<b>Fórmula:</b> d = m / V.", "<b>Conta:</b> d = 2,02 / 1,92 ≈ 1,05 g/mL.", "<b>Comparação com a tabela:</b> 1,05 g/mL é o valor do ácido acético."],
+      ans: "Ácido acético (d ≈ 1,05 g/mL)" }
+  ],
+  pressao: [
+    { id: "P1", kind: "parcial", src: "EEAR, via Projeto Agatha (ano e nº não informados)", title: "Forma de bolo com área menor",
+      q: "Uma força F é aplicada sobre uma superfície de 20 cm × 10 cm e produz pressão de 40 kPa. Se a mesma força passa a atuar sobre uma superfície de 20 cm × 5 cm, qual é a nova pressão?",
+      steps: ["<b>Dados:</b> p<sub>1</sub> = 40 kPa; A<sub>1</sub> = 200 cm²; A<sub>2</sub> = 100 cm²; F constante.", "<b>Fórmula:</b> p = F / A → p·A = F (constante).", "<b>Conta:</b> p<sub>2</sub> = p<sub>1</sub>·A<sub>1</sub>/A<sub>2</sub> = 40 · 200 / 100 = 80 kPa.", "<b>Ideia:</b> metade da área, pressão dobrada."],
+      ans: "p<sub>2</sub> = 80 kPa" },
+    { id: "P2", kind: "parcial", src: "UFRGS, via Projeto Agatha (ano e nº não informados)", title: "Força de um gás nas paredes",
+      q: "Um gás, em um recipiente cúbico de faces de 2,0 m², exerce pressão média de 5,0·10³ Pa. Qual a força média que o gás faz em cada face?",
+      steps: ["<b>Dados:</b> p = 5,0·10³ Pa; A = 2,0 m².", "<b>Fórmula:</b> p = F / A → F = p·A.", "<b>Conta:</b> F = 5,0·10³ · 2,0 = 1,0·10⁴ N."],
+      ans: "F = 1,0·10⁴ N" },
+    { id: "P3", kind: "parcial", src: "Ideia: EEAR (caminhão multado), via Projeto Agatha; dados e itens originais", title: "Por que o caminhão mais leve é multado?",
+      q: "Um caminhão de 40 t tem 2 eixos; outro, de 50 t, tem 3 eixos. Cada eixo tem 4 pneus, e cada pneu apoia 0,05 m² no asfalto. Calcule a pressão de cada caminhão sobre a pista e explique por que o mais leve pode ser multado e o mais pesado não.",
+      steps: ["<b>Dados:</b> F<sub>1</sub> = 40 000·10 = 4,0·10⁵ N; F<sub>2</sub> = 5,0·10⁵ N.", "<b>Áreas:</b> A<sub>1</sub> = 2·4·0,05 = 0,40 m²; A<sub>2</sub> = 3·4·0,05 = 0,60 m².", "<b>Fórmula:</b> p = F / A.", "<b>Conta:</b> p<sub>1</sub> = 4,0·10⁵ / 0,40 = 1,0·10⁶ Pa; p<sub>2</sub> = 5,0·10⁵ / 0,60 ≈ 8,3·10⁵ Pa.", "<b>Conclusão:</b> o de 50 t distribui o peso em mais área e exerce menor pressão. A pressão sobre a pista, e não o peso total, é o que danifica o pavimento."],
+      ans: "p<sub>40 t</sub> = 1,0·10⁶ Pa; p<sub>50 t</sub> ≈ 8,3·10⁵ Pa (menor)" }
+  ],
+  stevin: [
+    { id: "S1", kind: "parcial", src: "Unisinos, via Projeto Agatha (ano e nº não informados)", title: "Fundo de uma piscina",
+      q: "Uma piscina tem 28 m² de área e a água atinge 1,5 m de altura. Qual a pressão hidrostática que a água exerce no fundo? (A área da piscina muda o resultado?)",
+      steps: ["<b>Dados:</b> h = 1,5 m; d = 1000 kg/m³; g = 10 m/s². (A área de 28 m² é distrator.)", "<b>Fórmula:</b> p<sub>hid</sub> = d·g·h.", "<b>Conta:</b> p = 1000·10·1,5 = 1,5·10⁴ Pa.", "<b>Atenção:</b> a pressão no fundo só depende da profundidade, não da área nem do formato."],
+      ans: "p<sub>hid</sub> = 1,5·10⁴ Pa (a área não influencia)" },
+    { id: "S2", kind: "parcial", src: "Toda Matéria, “Exercícios sobre o Teorema de Stevin”", title: "Óleo sobre água num tanque aberto",
+      q: "Um tanque aberto contém 2,0 m de óleo (800 kg/m³) sobre 3,0 m de água (1000 kg/m³). Qual a pressão total na base do tanque? (p₀ = 1,0·10⁵ Pa)",
+      steps: ["<b>Fórmula:</b> p<sub>base</sub> = p₀ + d<sub>óleo</sub>·g·h<sub>óleo</sub> + d<sub>água</sub>·g·h<sub>água</sub>.", "<b>Óleo:</b> 800·10·2,0 = 16 000 Pa.", "<b>Água:</b> 1000·10·3,0 = 30 000 Pa.", "<b>Total:</b> 100 000 + 16 000 + 30 000 = 146 000 Pa."],
+      ans: "p = 1,46·10⁵ Pa" },
+    { id: "S3", kind: "parcial", src: "UFPR, via Projeto Agatha (ano e nº não informados); enunciado resumido", title: "Força no fundo de um reservatório",
+      q: "Um reservatório cilíndrico tem base de 2,4 m² e contém líquido de densidade 1,2 g/cm³ até 1,8 m de altura. Qual a força exercida pelo líquido no fundo? (g = 10 m/s²; despreze p₀)",
+      steps: ["<b>Dados:</b> d = 1,2 g/cm³ = 1200 kg/m³; h = 1,8 m; A = 2,4 m².", "<b>Pressão:</b> p = d·g·h = 1200·10·1,8 = 21 600 Pa.", "<b>Força:</b> F = p·A = 21 600·2,4 = 51 840 N.", "<b>Conferência:</b> equivale ao peso do líquido (d·V·g = 1200·4,32·10 = 51 840 N), pois o cilindro tem paredes verticais."],
+      ans: "F ≈ 5,18·10⁴ N" },
+    { id: "S4", kind: "parcial", src: "UFSCar, via Projeto Agatha (ano e nº não informados); enunciado resumido", title: "Bolsa de plasma",
+      q: "Uma bolsa de plasma (d = 1,04 g/cm³) é pendurada 2 m acima da veia do paciente. Qual a pressão exercida pelo plasma ao entrar na veia, em mmHg? (g = 10 m/s²; 1 mmHg ≈ 133,3 Pa; despreze p₀)",
+      steps: ["<b>Dados:</b> d = 1040 kg/m³; h = 2 m.", "<b>Fórmula:</b> p = d·g·h.", "<b>Conta:</b> p = 1040·10·2 = 20 800 Pa.", "<b>Conversão:</b> 20 800 / 133,3 ≈ 156 mmHg."],
+      ans: "p ≈ 2,08·10⁴ Pa ≈ 156 mmHg" },
+    { id: "S5", kind: "parcial", src: "Toda Matéria, “Exercícios sobre o Teorema de Stevin” (questão do tanque selado)", title: "Tanque selado com gás, óleo e água",
+      q: "Um tanque selado tem gás a 1,2·10⁵ Pa sobre 2,5 m de óleo (800 kg/m³), que está sobre 2,0 m de água (1000 kg/m³). Calcule a pressão na interface óleo–água (ponto L) e na base (ponto M). Dobrar a altura da água aumentaria a pressão em M em quanto?",
+      steps: ["<b>Ponto L:</b> p<sub>L</sub> = p<sub>gás</sub> + d<sub>óleo</sub>·g·h<sub>óleo</sub> = 1,2·10⁵ + 800·10·2,5 = 1,4·10⁵ Pa.", "<b>Ponto M:</b> p<sub>M</sub> = p<sub>L</sub> + 1000·10·2,0 = 1,4·10⁵ + 2,0·10⁴ = 1,6·10⁵ Pa.", "<b>Dobrando a água (4,0 m):</b> a pressão extra é 1000·10·2,0 = 2,0·10⁴ Pa."],
+      ans: "p<sub>L</sub> = 1,4·10⁵ Pa; p<sub>M</sub> = 1,6·10⁵ Pa; aumento de 2,0·10⁴ Pa" }
+  ],
+  vasos: [
+    { id: "V1", kind: "original", src: "original", title: "Óleo e água no tubo em U",
+      q: "Num tubo em U com água, coloca-se óleo (800 kg/m³) formando 20 cm de coluna em um ramo. Qual a altura da coluna de água acima da superfície de separação, no outro ramo?",
+      steps: ["Na altura da separação a pressão é igual nos dois ramos.", "<b>Fórmula:</b> d<sub>óleo</sub>·h<sub>óleo</sub> = d<sub>água</sub>·h<sub>água</sub>.", "<b>Conta:</b> 800·0,20 = 1000·h → h = 0,16 m."],
+      ans: "h = 16 cm" },
+    { id: "V2", kind: "original", src: "original", title: "Vasos de formatos diferentes",
+      q: "Três vasos de formatos diferentes estão ligados pelo fundo e cheios de água até 30 cm. Qual a pressão hidrostática no fundo de cada um? Há diferença?",
+      steps: ["<b>Fórmula:</b> p = d·g·h (só depende da altura).", "<b>Conta:</b> 1000·10·0,30 = 3000 Pa nos três."],
+      ans: "3000 Pa em todos; o formato não importa" },
+    { id: "V3", kind: "original", src: "original", title: "Água e mercúrio",
+      q: "Num tubo em U com mercúrio (13 600 kg/m³), derrama-se água em um ramo até 68 cm de coluna. Qual o desnível do mercúrio entre os ramos (altura da coluna de mercúrio acima da separação)?",
+      steps: ["<b>Fórmula:</b> d<sub>Hg</sub>·h<sub>Hg</sub> = d<sub>água</sub>·h<sub>água</sub>.", "<b>Conta:</b> 13 600·h = 1000·0,68 → h = 0,05 m."],
+      ans: "h = 5 cm" }
+  ],
+  manometro: [
+    { id: "M1", kind: "original", src: "original", title: "Manômetro de mercúrio",
+      q: "Um manômetro de tubo aberto, com mercúrio (13 600 kg/m³), liga-se a um gás. O mercúrio no ramo aberto fica 15 cm acima do nível do ramo ligado ao gás. Calcule a pressão manométrica e a pressão absoluta do gás (p₀ = 1,0·10⁵ Pa).",
+      steps: ["<b>Fórmula:</b> p<sub>gás</sub> = p₀ + d·g·Δh.", "<b>Manométrica:</b> 13 600·10·0,15 = 20 400 Pa.", "<b>Absoluta:</b> 100 000 + 20 400 = 120 400 Pa."],
+      ans: "p<sub>man</sub> = 2,04·10⁴ Pa; p<sub>gás</sub> = 1,204·10⁵ Pa" },
+    { id: "M2", kind: "original", src: "original", title: "Manômetro de água",
+      q: "Um manômetro de água mostra o ramo aberto 30 cm acima do ramo ligado a um botijão. Qual a pressão absoluta do gás? (p₀ = 1,0·10⁵ Pa)",
+      steps: ["d·g·Δh = 1000·10·0,30 = 3000 Pa.", "p = 100 000 + 3000 = 103 000 Pa."],
+      ans: "p = 1,03·10⁵ Pa" },
+    { id: "M3", kind: "original", src: "original", title: "Pressão abaixo da atmosférica",
+      q: "Num manômetro de mercúrio, o ramo aberto está 10 cm <b>abaixo</b> do nível do ramo ligado ao gás. Qual a pressão do gás? (p₀ = 1,0·10⁵ Pa) Ela é maior ou menor que a atmosférica?",
+      steps: ["O gás empurra menos que a atmosfera: Δh = −0,10 m.", "p = p₀ + d·g·Δh = 100 000 − 13 600·10·0,10 = 100 000 − 13 600 = 86 400 Pa."],
+      ans: "p = 8,64·10⁴ Pa, menor que a atmosférica" }
+  ],
+  pascal: [
+    { id: "PA1", kind: "real", src: "ENEM 2013 · 1º dia · caderno azul · questão 61", title: "Elevador hidráulico (adaptada)",
+      q: "A área do êmbolo do elevador de um ônibus é 5 vezes a da tubulação da bomba. Ele ergue com velocidade constante um cadeirante de 65 kg, a cadeira de 15 kg e a plataforma de 20 kg. Com g = 10 m/s², qual a força mínima do motor da bomba sobre o fluido?",
+      steps: ["<b>Dados:</b> m<sub>total</sub> = 65 + 15 + 20 = 100 kg → F<sub>2</sub> = 1000 N; A<sub>2</sub> = 5A<sub>1</sub>.", "<b>Fórmula (Pascal):</b> F<sub>1</sub>/A<sub>1</sub> = F<sub>2</sub>/A<sub>2</sub>.", "<b>Conta:</b> F<sub>1</sub> = 1000 · (A<sub>1</sub>/5A<sub>1</sub>) = 200 N."],
+      ans: "F = 200 N (alternativa C da prova)" },
+    { id: "PA2", kind: "parcial", src: "UNIPAC, via Toda Matéria (ano e nº não informados)", title: "Prensa de diâmetros 10 cm e 20 cm",
+      q: "Os êmbolos de uma prensa têm diâmetros de 10 cm e 20 cm. Uma força de 120 N atua no menor. Que força no maior mantém o equilíbrio?",
+      steps: ["A é proporcional ao raio²: A<sub>2</sub>/A<sub>1</sub> = (20/10)² = 4.", "F<sub>2</sub> = 4·120 = 480 N."],
+      ans: "F<sub>2</sub> = 480 N" },
+    { id: "PA3", kind: "original", src: "original", title: "Freio hidráulico",
+      q: "No cilindro do pedal, a área é 2 cm² e a força aplicada vale 50 N. O cilindro da roda tem 8 cm². Qual a força na roda?",
+      steps: ["<b>Fórmula:</b> F<sub>1</sub>/A<sub>1</sub> = F<sub>2</sub>/A<sub>2</sub>.", "<b>Conta:</b> F<sub>2</sub> = 50·(8/2) = 200 N."],
+      ans: "F<sub>2</sub> = 200 N" },
+    { id: "PA4", kind: "original", src: "original", title: "Ganha-se força, não trabalho",
+      q: "Na prensa do PA2 (razão de áreas 4), o êmbolo menor desce 20 cm com 120 N. Quanto sobe o maior? Compare os trabalhos.",
+      steps: ["<b>Volume conservado:</b> A<sub>1</sub>·d<sub>1</sub> = A<sub>2</sub>·d<sub>2</sub> → d<sub>2</sub> = 20/4 = 5 cm.", "<b>Trabalhos:</b> W<sub>1</sub> = 120·0,20 = 24 J; W<sub>2</sub> = 480·0,05 = 24 J."],
+      ans: "d<sub>2</sub> = 5 cm; W<sub>1</sub> = W<sub>2</sub> = 24 J" }
+  ],
+  arquimedes: [
+    { id: "A1", kind: "real", src: "ENEM 2011 · caderno azul · questão 73", title: "Densidade da água de um lago (adaptada)",
+      q: "Um cubo maciço de 10 cm de aresta e 3 kg, preso a um dinamômetro, marca 30 N no ar. Mergulhado até metade do volume em água do lago, marca 24 N. Com g = 10 m/s², qual a densidade da água do lago, em g/cm³?",
+      steps: ["<b>Empuxo:</b> E = P − P<sub>aparente</sub> = 30 − 24 = 6 N.", "<b>Volume imerso:</b> metade de 1000 cm³ = 500 cm³ = 5·10⁻⁴ m³.", "<b>Fórmula:</b> E = d·V<sub>imerso</sub>·g → 6 = d·5·10⁻⁴·10 → d = 1200 kg/m³ = 1,2 g/cm³.", "<b>Atenção:</b> trabalhe em unidades do SI e só converta no final."],
+      ans: "d = 1,2 g/cm³ (alternativa B da prova)" },
+    { id: "A2", kind: "original", src: "original", title: "Peso aparente",
+      q: "Um bloco de metal de 2 kg e 250 cm³ está pendurado por um fio, todo imerso na água. Calcule o empuxo, a tração no fio e a densidade do metal.",
+      steps: ["<b>Dados:</b> m = 2 kg; V = 250 cm³ = 2,5·10⁻⁴ m³.", "<b>Empuxo:</b> E = 1000·10·2,5·10⁻⁴ = 2,5 N.", "<b>Tração:</b> T = P − E = 20 − 2,5 = 17,5 N.", "<b>Densidade:</b> d = 2 / 2,5·10⁻⁴ = 8000 kg/m³."],
+      ans: "E = 2,5 N; T = 17,5 N; d = 8000 kg/m³" },
+    { id: "A3", kind: "original", src: "original", title: "Iceberg",
+      q: "Gelo: 920 kg/m³. Água do mar: 1030 kg/m³. Que fração do iceberg fica fora da água?",
+      steps: ["Flutuando, E = P: d<sub>mar</sub>·V<sub>imerso</sub> = d<sub>gelo</sub>·V<sub>total</sub>.", "V<sub>imerso</sub>/V<sub>total</sub> = 920/1030 ≈ 0,893.", "Fora: 1 − 0,893 ≈ 0,107."],
+      ans: "≈ 10,7 % do volume" },
+    { id: "A4", kind: "real", src: "ENEM PPL 2010 · caderno azul · questão 65", title: "Ludião (adaptada)",
+      q: "Um frasco de vidro emborcado, com ar e água, flutua numa garrafa PET fechada e cheia de água. Ao apertar a garrafa, o frasco desce. Por quê?",
+      steps: ["Apertar aumenta a pressão da água, e, por Pascal, o aumento chega a todos os pontos, inclusive à boca do frasco.", "Entra mais água no frasco e comprime o ar: a massa do conjunto aumenta e o volume externo não muda.", "A densidade média sobe, o peso passa a superar o empuxo e o frasco desce."],
+      ans: "Porque aumenta a quantidade de água dentro do frasco (alternativa C da prova)" },
+    { id: "A5", kind: "parcial", src: "UERJ, via Toda Matéria (ano e nº não informados); dados adaptados", title: "Barcaça",
+      q: "Uma barcaça de base retangular 20 m × 5 m flutua em água doce. Ao receber 10 contêineres de 1200 kg cada, quanto ela afunda?",
+      steps: ["<b>Peso extra:</b> 12 000·10 = 120 000 N.", "<b>Empuxo extra = peso extra:</b> 1000·(20·5·Δh)·10 = 120 000.", "Δh = 120 000 / 1 000 000 = 0,12 m."],
+      ans: "Δh = 0,12 m = 12 cm" },
+    { id: "A6", kind: "parcial", src: "ITA, via Toda Matéria (ano e nº não informados)", title: "Gelo derretendo no balde",
+      q: "Um gelo flutua na água de um balde. Quando derrete, o nível sobe, desce ou não muda?",
+      steps: ["Flutuando, E = P<sub>gelo</sub>: o volume deslocado tem a massa do gelo.", "A água do derretimento tem a mesma massa e ocupa exatamente esse volume."],
+      ans: "O nível não muda" },
+    { id: "A7", kind: "original", src: "original", title: "Boia presa ao fundo",
+      q: "Uma boia de 5 L e 1 kg é mantida totalmente submersa na água. Que força é preciso fazer para baixo para segurá-la?",
+      steps: ["<b>Dados:</b> V = 5 L = 5·10⁻³ m³; P = 1·10 = 10 N.", "<b>Empuxo:</b> E = 1000·10·5·10⁻³ = 50 N.", "<b>Equilíbrio:</b> F + P = E → F = 50 − 10 = 40 N."],
+      ans: "F = 40 N, para baixo" }
+  ],
+  torricelli: [
+    { id: "T1", kind: "parcial", src: "UFRGS, via Toda Matéria (ano e nº não informados)", title: "Barômetro de Torricelli",
+      q: "(I) No alto de uma montanha a coluna de mercúrio é maior. (II) Com água, a coluna seria de cerca de 10,3 m. (III) O barômetro pode determinar altitude. Quais estão corretas?",
+      steps: ["I é falsa: no alto a pressão atmosférica é menor, a coluna diminui.", "II é verdadeira: 0,76 m · 13,6 ≈ 10,3 m.", "III é verdadeira: a pressão varia com a altitude."],
+      ans: "Apenas II e III" },
+    { id: "T2", kind: "original", src: "original", title: "Coluna de 70 cm",
+      q: "Numa cidade alta, a coluna de mercúrio de um barômetro mede 70 cm. Calcule a pressão atmosférica local em Pa (g = 10 m/s², d<sub>Hg</sub> = 13 600 kg/m³) e em mmHg.",
+      steps: ["<b>Fórmula:</b> p<sub>atm</sub> = d·g·H.", "<b>Conta:</b> 13 600·10·0,70 = 95 200 Pa.", "<b>Em mmHg:</b> 70 cm = 700 mmHg."],
+      ans: "p<sub>atm</sub> = 9,52·10⁴ Pa = 700 mmHg" }
+  ]
+};
+</script>
+<script>
+"use strict";
+/* Simulado: 20 de múltipla escolha + 5 discursivas (16 a 25 = nível desafio). g = 10 m/s²; d_água = 1000 kg/m³; p₀ = 1,0·10⁵ Pa.
+   src: "original" ou prova real (adaptada). key = índice da alternativa correta (0 = a). */
+const SIMULADO = [
+  { n: 1, src: "original (estilo vestibular)", q: "Um cubo maciço de aresta 10 cm tem massa de 2,7 kg. Com base na tabela de densidades (g/cm³): madeira 0,6; alumínio 2,7; ferro 7,9; cobre 8,9; chumbo 11,3, de que material o cubo é feito?",
+    opts: ["Madeira.", "Alumínio.", "Ferro.", "Cobre.", "Chumbo."], key: 1,
+    res: "V = 10³ = 1000 cm³; m = 2,7 kg = 2700 g. d = 2700 / 1000 = 2,7 g/cm³ = alumínio. Erro típico: dividir 2,7 por 10 (aresta) em vez de pelo volume." },
+  { n: 2, src: "UNESP, via Projeto Agatha (ano e nº não informados); enunciado adaptado", q: "Um halterofilista de 80 kg levanta uma barra de 120 kg, apoiado nos dois pés, cuja área total de contato com o piso é 25 cm². Considerando g = 10 m/s², qual é a pressão exercida sobre o piso?",
+    opts: ["2·10⁵ Pa", "8·10⁵ Pa", "12·10⁵ Pa", "25·10⁵ Pa", "2·10⁶ Pa"], key: 1,
+    res: "F = (80 + 120)·10 = 2000 N (o piso suporta o atleta e a barra). A = 25 cm² = 25·10⁻⁴ m² = 2,5·10⁻³ m². p = 2000 / 2,5·10⁻³ = 8·10⁵ Pa. Erro típico (a): contar só a barra ou só o atleta." },
+  { n: 3, src: "Toda Matéria, “Exercícios sobre o Teorema de Stevin” (adaptada)", q: "Uma piscina retangular de 3 m de profundidade está cheia de água e aberta à atmosfera. Considere o ponto P<sub>1</sub>, no centro do fundo; P<sub>2</sub>, a 1 m de profundidade na parede lateral; e P<sub>3</sub>, no canto do fundo. A ordem crescente das pressões totais é:",
+    opts: ["P<sub>1</sub> &lt; P<sub>2</sub> &lt; P<sub>3</sub>", "P<sub>2</sub> &lt; P<sub>1</sub> = P<sub>3</sub>", "P<sub>3</sub> &lt; P<sub>2</sub> &lt; P<sub>1</sub>", "P<sub>1</sub> = P<sub>3</sub> &lt; P<sub>2</sub>", "P<sub>1</sub> = P<sub>2</sub> = P<sub>3</sub>"], key: 1,
+    res: "p = p₀ + d·g·h depende só da profundidade. P<sub>1</sub> e P<sub>3</sub> estão a 3 m (mesma pressão, 1,3·10⁵ Pa); P<sub>2</sub> está a 1 m (1,1·10⁵ Pa), a menor. A posição horizontal não importa." },
+  { n: 4, src: "ENEM 2013 · caderno azul · questão 57 (adaptada)", q: "Uma garrafa PET cheia de água tem três furos na lateral, em alturas diferentes. Com a garrafa tampada, a água não sai. Com a tampa retirada, a água escoa pelos furos. Quanto ao papel da pressão atmosférica, nos dois casos, respectivamente:",
+    opts: ["com a tampa, a pressão atmosférica impede a saída da água, por ser maior que a pressão interna; sem a tampa, a velocidade do jato depende apenas da pressão da coluna de água.",
+      "com a tampa, a pressão atmosférica impede a saída da água, por ser maior que a pressão interna; sem a tampa, a velocidade do jato é proporcional à pressão atmosférica na altura do furo.",
+      "com a tampa, a pressão atmosférica impede a entrada de ar, por ser menor que a pressão interna; sem a tampa, a velocidade do jato é proporcional à pressão atmosférica.",
+      "com a tampa, a pressão atmosférica impede a saída da água; sem a tampa, a velocidade do jato depende apenas da pressão atmosférica.",
+      "com a tampa, a pressão atmosférica impede a entrada de ar, por ser menor que a pressão interna; sem a tampa, a velocidade do jato depende só da pressão da coluna de água."], key: 0,
+    res: "Tampada: o ar não entra, a pressão interna cai abaixo da atmosférica e a atmosfera impede a saída. Destampada: a pressão atmosférica age na superfície e nos furos e se cancela; sobra d·g·h." },
+  { n: 5, src: "original", q: "Num tubo em U aberto nas duas pontas há água. Despeja-se óleo, de densidade 800 kg/m³, em um dos ramos até formar uma coluna de 20 cm. No outro ramo, qual a altura da coluna de água acima da superfície de separação entre o óleo e a água?",
+    opts: ["12,8 cm", "16 cm", "20 cm", "25 cm", "160 cm"], key: 1,
+    res: "Mesma pressão na superfície de separação: d<sub>óleo</sub>·h<sub>óleo</sub> = d<sub>água</sub>·h<sub>água</sub> → 800·20 = 1000·h → h = 16 cm." },
+  { n: 6, src: "original", q: "Um manômetro de tubo aberto, com mercúrio (13 600 kg/m³), está ligado a um recipiente com gás. O mercúrio no ramo aberto fica 15 cm <b>acima</b> do nível no ramo ligado ao gás. Qual é a pressão absoluta do gás?",
+    opts: ["2,04·10⁴ Pa", "8,0·10⁴ Pa", "1,0·10⁵ Pa", "1,204·10⁵ Pa", "1,204·10⁶ Pa"], key: 3,
+    res: "p<sub>gás</sub> = p₀ + d·g·Δh = 100 000 + 13 600·10·0,15 = 120 400 Pa = 1,204·10⁵ Pa. (a) é só a manométrica; (b) subtrai em vez de somar." },
+  { n: 7, src: "ENEM 2013 · caderno azul · questão 61 (adaptada)", q: "Um elevador hidráulico para cadeirantes tem êmbolo com área 5 vezes maior que a da tubulação que sai da bomba. Desprezando atritos, qual é a força mínima que o motor da bomba deve exercer sobre o fluido para erguer, com velocidade constante, o cadeirante (65 kg), a cadeira (15 kg) e a plataforma (20 kg)?",
+    opts: ["20 N", "100 N", "200 N", "1 000 N", "5 000 N"], key: 2,
+    res: "Carga: (65 + 15 + 20)·10 = 1000 N. Pascal: F₁/A₁ = F₂/A₂ → F₁ = 1000/5 = 200 N." },
+  { n: 8, src: "original", q: "O cilindro do pedal de um freio hidráulico tem 2 cm² de área e recebe uma força de 50 N. O cilindro que atua na roda tem 8 cm². Qual a força transmitida à roda, desprezando perdas?",
+    opts: ["200 N", "12,5 N", "25 N", "400 N", "800 N"], key: 0,
+    res: "F₂ = F₁·(A₂/A₁) = 50·(8/2) = 200 N." },
+  { n: 9, src: "ENEM PPL 2010 · caderno azul · questão 65 (adaptada)", q: "Um ludião é um frasco de vidro emborcado, com ar e água, que flutua em uma garrafa PET fechada e cheia de água. Ao apertar a garrafa, o frasco desce. Isso ocorre porque:",
+    opts: ["diminui a força, para baixo, que a água aplica no frasco.", "aumenta a pressão na parte apertada da garrafa.", "aumenta a quantidade de água dentro do frasco.", "diminui a força de resistência da água sobre o frasco.", "diminui a pressão que a água aplica na base do frasco."], key: 2,
+    res: "O aperto aumenta a pressão (Pascal) e entra mais água no frasco, comprimindo o ar. A massa do conjunto sobe, o volume externo não muda, a densidade média aumenta e o peso passa a superar o empuxo." },
+  { n: 10, src: "ENEM 2011 · caderno azul · questão 73 (adaptada)", q: "Para determinar a densidade da água de um lago, usa-se um dinamômetro e um cubo maciço e homogêneo de 10 cm de aresta e 3 kg. No ar, o dinamômetro marca 30 N. Com metade do cubo mergulhada, marca 24 N. Qual é a densidade da água do lago, em g/cm³?",
+    opts: ["0,6", "1,2", "1,5", "2,4", "4,8"], key: 1,
+    res: "E = P − P<sub>ap</sub> = 30 − 24 = 6 N. V<sub>imerso</sub> = 500 cm³ = 5·10⁻⁴ m³. 6 = d·5·10⁻⁴·10 → d = 1200 kg/m³ = 1,2 g/cm³." },
+  { n: 11, src: "original", q: "O gelo tem densidade de 920 kg/m³ e a água do mar, 1030 kg/m³. Que fração aproximada do volume de um iceberg em equilíbrio fica acima da superfície?",
+    opts: ["8 %", "50 %", "89 %", "11 %", "92 %"], key: 3,
+    res: "Em equilíbrio, E = P: V<sub>imerso</sub>/V<sub>total</sub> = 920/1030 ≈ 0,893. Fora: ≈ 0,107 ≈ 11 %. (c) é a fração imersa." },
+  { n: 12, src: "original", q: "Uma boia de 5 litros e massa 1 kg é mantida totalmente submersa na água por uma pessoa. Que força vertical a pessoa precisa fazer sobre a boia?",
+    opts: ["10 N, para baixo.", "50 N, para baixo.", "60 N, para baixo.", "40 N, para cima.", "40 N, para baixo."], key: 4,
+    res: "V = 5·10⁻³ m³; E = 1000·10·5·10⁻³ = 50 N; P = 10 N. Equilíbrio: F + P = E → F = 40 N, para baixo." },
+  { n: 13, src: "original", disc: true, q: "Um submarino de pesquisa está a 15 m de profundidade no mar (densidade da água do mar: 1030 kg/m³). Considere p₀ = 1,0·10⁵ Pa. Apresente os cálculos e determine:<br>a) a pressão hidrostática nessa profundidade;<br>b) a pressão total sobre o submarino;<br>c) o módulo da força total que a água exerce sobre uma escotilha de 0,03 m²;<br>d) a força resultante sobre a escotilha, de fora para dentro, se o interior do submarino é mantido a 1,0·10⁵ Pa.",
+    res: "a) p<sub>hid</sub> = d·g·h = 1030·10·15 = 1,545·10⁵ Pa.<br>b) p = p₀ + p<sub>hid</sub> = 1,0·10⁵ + 1,545·10⁵ = 2,545·10⁵ Pa.<br>c) F = p·A = 2,545·10⁵·0,03 ≈ 7,6·10³ N.<br>d) Dentro há p₀, que cancela a atmosfera: Δp = p<sub>hid</sub> = 1,545·10⁵ Pa; F<sub>res</sub> = 1,545·10⁵·0,03 ≈ 4,6·10³ N.<br>Erro comum: esquecer p₀ no item b (daria só 4,6·10³ N no item c) ou esquecer que o ar interno também empurra." },
+  { n: 14, src: "original", disc: true, q: "Uma prensa hidráulica tem êmbolos de áreas 20 cm² e 100 cm². Uma força de 40 N é aplicada no êmbolo menor, que desce 25 cm. Apresente os cálculos e determine:<br>a) a pressão transmitida ao fluido, em Pa;<br>b) a força no êmbolo maior;<br>c) o deslocamento do êmbolo maior;<br>d) o trabalho realizado em cada êmbolo. O que você conclui?",
+    res: "a) p = F₁/A₁ = 40 / (20·10⁻⁴) = 2,0·10⁴ Pa.<br>b) F₂ = p·A₂ = 2,0·10⁴·100·10⁻⁴ = 200 N.<br>c) A₁·d₁ = A₂·d₂ → d₂ = 25·20/100 = 5 cm = 0,05 m.<br>d) W₁ = 40·0,25 = 10 J; W₂ = 200·0,05 = 10 J. Iguais: a prensa multiplica a força, não o trabalho." },
+  { n: 15, src: "original", disc: true, q: "Um cubo maciço de 20 cm de aresta e 24 kg é solto em um lago de água doce.<br>a) Calcule a densidade do cubo e diga se ele afunda ou flutua.<br>b) Se o cubo for preso por um fio e mantido totalmente submerso, determine o empuxo e a tração no fio.",
+    res: "a) V = 0,2³ = 8·10⁻³ m³; d = 24 / 8·10⁻³ = 3000 kg/m³ &gt; 1000: afunda.<br>b) E = 1000·8·10⁻³·10 = 80 N. P = 240 N. T = P − E = 160 N." },
+  /* ---- Nível desafio (16 a 25): mais etapas e mais conceitos por questão. Gabaritos conferidos por cálculo próprio. ---- */
+  { n: 16, hard: true, src: "Espcex (Aman) 2015 (adaptada)", q: "Um cubo homogêneo de aresta 0,40 m e massa 40 kg está suspenso no teto por uma mola ideal, dentro de um recipiente vazio. O peso do cubo provoca uma deformação de 5 cm na mola. Em seguida, coloca-se água no recipiente até que o cubo fique em equilíbrio com <b>metade</b> do volume submerso. Qual é, agora, a deformação da mola? (d<sub>água</sub> = 1000 kg/m³)",
+    opts: ["3,0 cm", "2,5 cm", "2,0 cm", "1,5 cm", "1,0 cm"], key: 4,
+    res: "Mola: P = k·x₀ → 400 = k·0,05 → k = 8000 N/m. Cubo: V = 0,4³ = 0,064 m³; imerso = 0,032 m³. E = 1000·0,032·10 = 320 N. Equilíbrio: F<sub>el</sub> + E = P → F<sub>el</sub> = 400 − 320 = 80 N → x = 80/8000 = 0,01 m = 1,0 cm. A água \"alivia\" 320 N dos 400 N, e a mola só segura o resto. Erro típico: esquecer que a mola também diminui de deformação (usar 2,5 cm = metade de 5 cm)." },
+  { n: 17, src: "Unesp 2015 (adaptada)", q: "Uma pessoa segura, em repouso dentro de um lago calmo, uma pedra de 12 kg e densidade 2·10³ kg/m³. Na situação 1, a pedra está <b>totalmente</b> imersa e a pessoa faz sobre ela uma força vertical para cima, de módulo F<sub>1</sub>. Na situação 2, apenas <b>um quarto</b> do volume da pedra está imerso e a força vertical para cima tem módulo F<sub>2</sub>. Com d<sub>água</sub> = 10³ kg/m³ e g = 10 m/s², quanto vale F<sub>2</sub> − F<sub>1</sub>?",
+    opts: ["60 N", "75 N", "45 N", "30 N", "15 N"], key: 2,
+    res: "V = m/d = 12 / 2·10³ = 6·10⁻³ m³; P = 120 N. Situação 1: E₁ = 1000·6·10⁻³·10 = 60 N → F₁ = 120 − 60 = 60 N. Situação 2: V<sub>imerso</sub> = 1,5·10⁻³ m³ → E₂ = 15 N → F₂ = 105 N. F₂ − F₁ = 45 N. Atalho: a diferença é só a variação do empuxo, 60 − 15 = 45 N." },
+  { n: 18, src: "original (nível desafio)", q: "Um recipiente com água está sobre uma balança, que marca <b>3,0 kg</b> (recipiente + água). Um bloco maciço de 4,0 kg e volume 1,0·10⁻³ m³ está preso a um fio fixo em um suporte e é mergulhado <b>totalmente</b> na água, sem tocar o fundo nem as paredes e sem que a água transborde. Qual passa a ser a leitura da balança? (g = 10 m/s², d<sub>água</sub> = 1000 kg/m³)",
+    opts: ["4,0 kg", "3,0 kg", "7,0 kg", "2,0 kg", "3,4 kg"], key: 0,
+    res: "A água empurra o bloco para cima com E = 1000·10⁻³·10 = 10 N. Pela ação e reação, o bloco empurra a água <b>para baixo</b> com 10 N, e a balança sente esse acréscimo: 10 N ≙ 1,0 kg. Leitura: 3,0 + 1,0 = 4,0 kg. O peso do bloco (40 N) não conta, porque é sustentado pelo fio. (c) seria o caso do bloco apoiado no fundo; (d) erra o sinal da reação." },
+  { n: 19, src: "Epcar (Afa) 2013 (adaptada)", q: "Uma esfera homogênea e rígida, de densidade μ<sub>1</sub> e volume V, repousa no fundo de um recipiente fechado em cima; nessa situação o fundo exerce sobre ela uma força normal N<sub>1</sub>. O recipiente é preenchido lentamente por um líquido de densidade μ. Em certo momento a esfera flutua com <b>metade</b> do volume submerso. Quando o recipiente fica totalmente cheio, a esfera é comprimida contra a tampa superior, que exerce sobre ela uma normal N<sub>2</sub>. Quanto vale N<sub>2</sub>/N<sub>1</sub>?",
+    opts: ["1/2", "1", "3/2", "2"], key: 1,
+    res: "Fundo: N₁ = P = μ₁·V·g. Metade submersa, em equilíbrio: E = P → μ·(V/2)·g = μ₁·V·g → μ = 2μ₁. Cheio: E = μ·V·g = 2μ₁·V·g, para cima; a tampa empurra para baixo: N₂ + P = E → N₂ = 2μ₁Vg − μ₁Vg = μ₁·V·g. Logo N₂/N₁ = 1." },
+  { n: 20, src: "ITA 2013 (adaptada; a figura foi descrita no texto)", q: "Um recipiente contém dois líquidos homogêneos e imiscíveis, A e B, de densidades ρ<sub>A</sub> = 4ρ e ρ<sub>B</sub> = 6ρ, em que ρ é a densidade da esfera. A esfera, maciça e homogênea, de massa 5 kg, fica em equilíbrio com metade do volume em cada líquido, presa ao fundo do recipiente por uma mola de constante elástica 800 N/m (a mola fica abaixo da esfera, esticada). Qual é a deformação da mola? (g = 10 m/s²)",
+    opts: ["0 m", "9/16 m", "3/8 m", "1/4 m", "1/8 m"], key: 3,
+    res: "O volume da esfera é V = m/ρ; metade em cada líquido: V/2 = m/(2ρ). E<sub>A</sub> = 4ρ·(m/2ρ)·g = 2mg = 100 N; E<sub>B</sub> = 6ρ·(m/2ρ)·g = 3mg = 150 N. Empuxo total = 250 N, para cima; peso = 50 N, para baixo. A mola puxa para baixo: F<sub>el</sub> = 250 − 50 = 200 N → x = 200/800 = 1/4 m. Repare que ρ se cancela: o resultado vale para qualquer densidade da esfera." },
+  { n: 21, src: "Escola Naval 2014 (adaptada)", q: "Uma embarcação de massa total m navega em água doce (rio) e também em água salgada (mar). Numa viagem, uma carga é removida para que o volume submerso <b>permaneça o mesmo</b> quando ela muda de um meio para o outro. Sendo d<sub>m</sub> a densidade da água do mar e d<sub>r</sub> a do rio, qual é a massa da carga removida e em que sentido a embarcação navega?",
+    opts: ["m·(d<sub>m</sub> − d<sub>r</sub>)/d<sub>r</sub>, do mar para o rio.", "m·(d<sub>m</sub> − d<sub>r</sub>)/d<sub>m</sub>, do rio para o mar.", "m·(d<sub>m</sub> − d<sub>r</sub>)/d<sub>r</sub>, do rio para o mar.", "m·(d<sub>m</sub> − d<sub>r</sub>)/d<sub>m</sub>, do mar para o rio.", "m·d<sub>r</sub>/d<sub>m</sub>, do mar para o rio."], key: 3,
+    res: "Se é preciso <b>tirar</b> carga, o empuxo caiu: a água ficou menos densa, então a embarcação vai do mar para o rio (de rio para mar ela subiria, e não se tiraria carga). No mar: V = m/d<sub>m</sub>. No rio: V = (m − m<sub>R</sub>)/d<sub>r</sub>. Igualando: m<sub>R</sub> = m − m·d<sub>r</sub>/d<sub>m</sub> = m·(d<sub>m</sub> − d<sub>r</sub>)/d<sub>m</sub>. A letra (e) é a massa que <b>fica</b> a bordo." },
+  { n: 22, src: "PUC-Rio 2012 (adaptada)", q: "Um barco flutua de modo que <b>metade</b> do volume do seu casco fica acima da linha da água. Quando se faz um furo no casco, entram no barco 500 kg de água até ele afundar (ficar com o casco todo na água). Qual é a massa do barco? (d<sub>água</sub> = 1000 kg/m³)",
+    opts: ["250 kg", "500 kg", "750 kg", "1000 kg", "1500 kg"], key: 1,
+    res: "Antes: metade imersa, E = P → d·(V/2)·g = m·g → m = d·V/2. Na iminência de afundar: casco todo imerso, E′ = d·V·g = (m + 500)·g → d·V = m + 500. Como d·V = 2m: 2m = m + 500 → m = 500 kg (V = 1 m³). Erro típico: achar que a água que entra é igual à massa do barco inteiro." },
+  { n: 23, src: "Epcar (Afa) 2015 (adaptada)", q: "Um macaco hidráulico tem dois pistões, A e B, de raios R<sub>A</sub> = 60 cm e R<sub>B</sub> = 240 cm. Ele será usado para elevar, a uma altura de 2 m, um veículo de massa 1 tonelada, por meio de uma força F aplicada no pistão menor. Despreze massas dos pistões e atritos, e considere o líquido incompressível. Qual é o fator de multiplicação de força do macaco e o trabalho realizado por F ao levantar o veículo bem lentamente, com velocidade constante?",
+    opts: ["4 e 2,0·10⁴ J", "4 e 5,0·10³ J", "16 e 2,0·10⁴ J", "16 e 1,25·10³ J"], key: 2,
+    res: "A força é proporcional à <b>área</b>, não ao raio: A<sub>B</sub>/A<sub>A</sub> = (R<sub>B</sub>/R<sub>A</sub>)² = 4² = 16. Fator de multiplicação = 16 (F = mg/16 = 625 N). Trabalho: o sistema não cria energia, então W = m·g·h = 1000·10·2 = 2,0·10⁴ J (o pistão menor percorre 16·2 = 32 m, e 625·32 = 2,0·10⁴ J). Erro típico: usar a razão dos raios (4) em vez da razão das áreas (16)." },
+  { n: 24, src: "original (nível desafio)", disc: true, q: "Um cubo maciço de aresta 10 cm e densidade 900 kg/m³ flutua, totalmente imerso, entre duas camadas de líquidos imiscíveis: <b>óleo</b> (800 kg/m³) por cima e <b>água</b> (1000 kg/m³) por baixo. O cubo fica com as faces horizontais, atravessando a interface, e a superfície livre do óleo está 3 cm acima da face superior do cubo. Use pressões manométricas (ignore p₀) e g = 10 m/s². Apresente os cálculos e determine:<br>a) o peso do cubo;<br>b) a fração do volume do cubo que fica na água e a altura dessa parte;<br>c) a pressão e a força do líquido sobre a face superior e sobre a face inferior do cubo;<br>d) a diferença entre as forças do item c. O que ela representa?",
+    res: "a) P = d·V·g = 900·10⁻³·10 = 9 N.<br>b) Equilíbrio: P = E<sub>óleo</sub> + E<sub>água</sub> → 9 = 800·10·(10⁻³ − V<sub>a</sub>) + 1000·10·V<sub>a</sub> = 8 + 2000·V<sub>a</sub> → V<sub>a</sub> = 5·10⁻⁴ m³, ou seja, 50 % do cubo. Altura na água: 5 cm.<br>c) Face superior (3 cm de óleo): p = 800·10·0,03 = 240 Pa → F = 240·0,01 = 2,4 N, para baixo. Face inferior (3 + 5 = 8 cm de óleo e 5 cm de água): p = 800·10·0,08 + 1000·10·0,05 = 640 + 500 = 1140 Pa → F = 11,4 N, para cima.<br>d) 11,4 − 2,4 = 9,0 N, para cima. É o empuxo, e é igual ao peso, como pedia o equilíbrio. As forças nas faces laterais se cancelam. Erro comum: usar só a densidade da água na face inferior." },
+  { n: 25, src: "original (nível desafio)", disc: true, q: "Um submarino tem massa de 9,0·10⁵ kg (já com a tripulação) e volume externo de 1,0·10³ m³. Adote a densidade da água do mar como 1,0·10³ kg/m³, p₀ = 1,0·10⁵ Pa e g = 10 m/s². Apresente os cálculos e determine:<br>a) a fração do volume que fica submersa quando ele flutua na superfície;<br>b) a massa de água, e o volume de água, que os tanques de lastro precisam receber para o submarino ficar totalmente submerso e parado (em equilíbrio);<br>c) a pressão total a 80 m de profundidade;<br>d) a pressão mínima do ar comprimido para expulsar a água de um tanque de lastro a essa profundidade. Explique.",
+    res: "a) Flutuando, E = P: d·V<sub>sub</sub> = m → V<sub>sub</sub> = 9,0·10⁵/10³ = 900 m³ → 90 % do volume.<br>b) Totalmente submerso: E = 10³·10³·10 = 1,0·10⁷ N; P = 9,0·10⁶ N. Faltam 1,0·10⁶ N de peso, ou seja, 1,0·10⁵ kg de água. Como a água do mar tem 10³ kg/m³, são 100 m³ (10 % do volume, o que fecha com o item a).<br>c) p = p₀ + d·g·h = 1,0·10⁵ + 10³·10·80 = 9,0·10⁵ Pa (9 atm).<br>d) Para empurrar a água para fora, o ar do tanque precisa ter pressão <b>maior</b> que a da água do mar na saída: acima de 9,0·10⁵ Pa. Por isso submarinos usam ar muito comprimido, e por isso é mais difícil esvaziar os tanques quanto mais fundo se está." }
+];
+</script>
+<script>
+"use strict";
+/* Figuras animadas do simulado. Cada função devolve um <svg>. O estado estático (sem animação) é o estado FINAL;
+   as animações (classes .an + .k-*) partem de um estado inicial e voltam ao final. Veja aluno.css. */
+const C = { w: "#8cc8d8", gl: "#12485c", red: "#d62f4b", grn: "#12a37f", amb: "#f0b429", oil: "#e3b23c", hg: "#8d98a4" };
+const fsvg = (vb, body, T) => `<svg viewBox="0 0 ${vb}" aria-hidden="true" style="--T:${T}s">${body}</svg>`;
+const ftx = (x, y, s, cls = "", a = "") => `<text x="${x}" y="${y}" class="ft ${cls}" ${a}>${s}</text>`;
+const farr = (x1, y1, x2, y2, c, cls = "") => {
+  const a = Math.atan2(y2 - y1, x2 - x1), p = t => `${(x2 - 8 * Math.cos(a + t)).toFixed(1)},${(y2 - 8 * Math.sin(a + t)).toFixed(1)}`;
+  return `<g class="${cls}" stroke="${c}" fill="${c}"><line x1="${x1}" y1="${y1}" x2="${(x2 - 5 * Math.cos(a)).toFixed(1)}" y2="${(y2 - 5 * Math.sin(a)).toFixed(1)}" stroke-width="3"/><polygon points="${x2},${y2} ${p(.45)} ${p(-.45)}" stroke="none"/></g>`;
+};
+const brk = (x, y1, y2, label, anchor = "start", dx = 6) =>
+  `<g stroke="#333" stroke-width="1.2" fill="none"><path d="M${x - 3},${y1} H${x} V${y2} H${x - 3}"/></g>${ftx(x + dx, (y1 + y2) / 2 + 4, label, "", `text-anchor="${anchor}"`)}`;
+
+/* ---- hidráulica (Q7, Q8, Q14) ---- */
+function figPrensa(o) {
+  return fsvg("340 190", `
+    <rect x="40" y="140" width="250" height="20" fill="${C.w}"/>
+    <path d="M40,140 H70 M200,140 H290 M70,140 H200 M40,160 H290" stroke="${C.gl}" stroke-width="2.5" fill="none"/>
+    <g class="an k-fL ob"><rect x="40" y="98" width="30" height="42" fill="${C.w}"/></g>
+    <g class="an k-fR ob"><rect x="200" y="88" width="90" height="52" fill="${C.w}"/></g>
+    <path d="M40,50 V140 M70,50 V140 M200,60 V140 M290,60 V140" stroke="${C.gl}" stroke-width="2.5"/>
+    <g class="an k-pL"><rect x="40" y="90" width="30" height="8" fill="${C.gl}"/><rect x="53" y="40" width="4" height="50" fill="${C.gl}"/>
+      ${farr(22, 52, 22, 88, C.red)}${ftx(2, 46, o.fl)}</g>
+    <g class="an k-pR"><rect x="200" y="80" width="90" height="8" fill="${C.gl}"/><rect x="215" y="40" width="60" height="40" fill="#dbe3e1" stroke="#555" stroke-width="1.5"/>
+      ${ftx(245, 64, o.lr, "", 'text-anchor="middle"')}</g>
+    ${o.ex ? ftx(296, 100, o.ex) : ""}
+    ${ftx(170, 180, o.note, "", 'text-anchor="middle"')}`, 8);
+}
+
+const FIGS = {
+  /* Q4: garrafa PET */
+  4: () => fsvg("340 190", `
+    <rect x="0" y="170" width="340" height="20" fill="#dfe7e4"/>
+    <rect x="151" y="60" width="78" height="109" fill="${C.w}"/>
+    <path d="M150,40 V170 H230 V40 H202 V20 H178 V40 Z" fill="none" stroke="${C.gl}" stroke-width="3"/>
+    ${[[90, 59], [120, 66], [150, 51]].map(([y, r]) => `<path class="an k-jet" pathLength="1" d="M150,${y} Q${150 - r / 2},${y} ${150 - r},170" fill="none" stroke="#4aa3bd" stroke-width="3"/><circle cx="150" cy="${y}" r="2.5" fill="${C.gl}"/>`).join("")}
+    <rect class="an k-cap cap" x="176" y="12" width="28" height="9" rx="2" fill="${C.amb}" stroke="#8a6a10"/>
+    ${farr(190, 0, 190, 17, C.amb, "an k-lbB lbb")}${ftx(200, 12, "p₀", "an k-lbB lbb")}
+    ${ftx(8, 24, "Tampada: a água não sai", "an k-lbA lba")}${ftx(8, 24, "Sem tampa: a água jorra", "an k-lbB lbb")}`, 8),
+
+  /* Q5: tubo em U com óleo e água */
+  5: () => fsvg("340 190", `
+    <rect x="90" y="52" width="0" height="0"/>
+    <g class="an k-ow ob"><rect x="90" y="100" width="40" height="60" fill="${C.w}"/></g>
+    <g class="an k-rw ob"><rect x="210" y="52" width="40" height="108" fill="${C.w}"/></g>
+    <rect x="130" y="130" width="80" height="30" fill="${C.w}"/>
+    <g class="an k-oil ob"><rect x="90" y="40" width="40" height="60" fill="${C.oil}"/></g>
+    <path d="M88,10 V162 H252 V10 M132,10 V130 H208 V10" fill="none" stroke="${C.gl}" stroke-width="3"/>
+    <line class="an k-pour" x1="110" y1="0" x2="110" y2="40" stroke="${C.oil}" stroke-width="5"/>
+    <line x1="90" y1="100" x2="250" y2="100" stroke="#333" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <g class="an k-lbB lbb">${brk(76, 40, 100, "", "end", -6)}${ftx(70, 74, "20 cm", "", 'text-anchor="end"')}${brk(262, 52, 100, "h = ?")}</g>
+    ${ftx(94, 32, "óleo (800 kg/m³)")}${ftx(150, 150, "água")}`, 8),
+
+  /* Q6: manômetro de tubo aberto */
+  6: () => fsvg("340 190", `
+    <rect x="10" y="30" width="70" height="80" fill="#f8e4e8" stroke="${C.gl}" stroke-width="2.5"/>
+    <rect x="80" y="44" width="48" height="18" fill="#f8e4e8"/><path d="M80,44 H128 M80,62 H128" stroke="${C.gl}" stroke-width="2.5"/>
+    <rect x="128" y="44" width="30" height="126" fill="#f8e4e8"/>
+    <g class="an k-mL ob"><rect x="128" y="110" width="30" height="60" fill="${C.hg}"/></g>
+    <g class="an k-mR ob"><rect x="220" y="65" width="30" height="105" fill="${C.hg}"/></g>
+    <rect x="158" y="140" width="62" height="30" fill="${C.hg}"/>
+    <path d="M128,44 V170 H250 V20 M158,44 V140 H220 V20" fill="none" stroke="${C.gl}" stroke-width="2.5"/>
+    ${[[22, 50, 0], [48, 90, -.5], [30, 78, -1], [58, 48, -1.4], [40, 100, -.2]].map(([x, y, d]) => `<circle class="pt" cx="${x}" cy="${y}" r="3.2" fill="${C.red}" style="animation-delay:${d}s"/>`).join("")}
+    ${ftx(24, 128, "gás")}${ftx(166, 162, "mercúrio", "w")}
+    ${farr(235, 0, 235, 17, C.amb)}${ftx(246, 12, "p₀")}
+    <line x1="128" y1="110" x2="272" y2="110" stroke="#333" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <g class="an k-lbB lbb">${brk(266, 65, 110, "Δh = 15 cm", "start", 6)}</g>`, 8),
+
+  7: () => figPrensa({ fl: "F = ?", lr: "pessoa + cadeira", note: "êmbolo grande com área 5 vezes maior", ex: "" }),
+  8: () => figPrensa({ fl: "50 N", lr: "F = ?", note: "pedal: 2 cm²   ·   roda: 8 cm²", ex: "" }),
+  14: () => figPrensa({ fl: "40 N", lr: "F₂ = ?", note: "20 cm² (desce 25 cm)   ·   100 cm²", ex: "d₂ = ?" }),
+
+  /* Q9: ludião */
+  9: () => fsvg("320 190", `
+    <g class="an k-bt"><rect x="112" y="55" width="96" height="123" rx="10" fill="${C.w}" opacity=".85"/>
+      <path d="M110,176 V66 Q110,52 124,48 H146 V16 H174 V48 H196 Q210,52 210,66 V176 Z" fill="none" stroke="${C.gl}" stroke-width="3"/></g>
+    <rect x="145" y="8" width="30" height="8" rx="2" fill="${C.amb}" stroke="#8a6a10"/>
+    <g class="an k-dv"><rect x="150" y="70" width="20" height="34" fill="${C.w}" stroke="${C.gl}" stroke-width="2"/>
+      <g class="an k-air ot"><rect x="151" y="71" width="18" height="18" fill="#fff"/></g>
+      <path d="M150,104 V70 H170 V104" fill="none" stroke="${C.gl}" stroke-width="2.5"/></g>
+    <g class="an k-hL"><rect x="78" y="92" width="24" height="44" rx="9" fill="${C.amb}" stroke="#8a6a10" stroke-width="2"/></g>
+    <g class="an k-hR"><rect x="218" y="92" width="24" height="44" rx="9" fill="${C.amb}" stroke="#8a6a10" stroke-width="2"/></g>
+    ${ftx(260, 80, "ludião", "", "")}
+    ${ftx(160, 4, "", "")}
+    <g class="an k-lbP"><text x="22" y="40" class="ft">aperta:</text><text x="22" y="54" class="ft r">pressão ↑</text></g>`, 9),
+
+  /* Q10: dinamômetro e cubo */
+  10: () => fsvg("340 190", `
+    <rect x="170" y="95" width="150" height="90" fill="none"/>
+    <g class="an k-hang"><rect x="225" y="30" width="20" height="40" fill="#fff" stroke="${C.gl}" stroke-width="2"/>
+      <line x1="229" y1="40" x2="241" y2="40" stroke="#555"/><line x1="229" y1="50" x2="241" y2="50" stroke="#555"/><line x1="226" y1="56" x2="244" y2="56" stroke="${C.red}" stroke-width="2"/>
+      <line x1="235" y1="70" x2="235" y2="95" stroke="#444" stroke-width="1.5"/>
+      <rect x="215" y="95" width="40" height="40" fill="#c9b79c" stroke="#7a6a4f" stroke-width="2"/>${ftx(235, 119, "3 kg", "", 'text-anchor="middle"')}</g>
+    <rect x="171" y="115" width="148" height="70" fill="${C.w}" opacity=".5"/>
+    <path d="M170,95 V185 H320 V95" fill="none" stroke="${C.gl}" stroke-width="3"/>
+    <line x1="171" y1="115" x2="319" y2="115" stroke="#4aa3bd" stroke-width="2"/>
+    ${ftx(205, 50, "30 N", "big an k-lbA lba", 'text-anchor="end"')}${ftx(205, 50, "24 N", "big an k-lbB lbb", 'text-anchor="end"')}
+    ${ftx(205, 66, "marca o dinamômetro", "", 'text-anchor="end"')}
+    ${ftx(160, 135, "metade do cubo", "an k-lbB lbb", 'text-anchor="end"')}${ftx(160, 148, "dentro da água", "an k-lbB lbb", 'text-anchor="end"')}`, 8),
+
+  /* Q11: iceberg */
+  11: () => fsvg("340 190", `
+    <rect x="0" y="90" width="340" height="100" fill="${C.w}" opacity=".35"/>
+    <g class="an k-berg"><polygon points="125,86 140,80 200,80 215,86 215,170 125,170" fill="#eef7fa" stroke="#7ba7b5" stroke-width="2"/></g>
+    <rect x="0" y="90" width="340" height="100" fill="${C.w}" opacity=".45"/>
+    <line x1="0" y1="90" x2="340" y2="90" stroke="#4aa3bd" stroke-width="2"/>
+    ${ftx(8, 20, "gelo: 920 kg/m³")}${ftx(8, 36, "mar: 1030 kg/m³")}
+    <g class="an k-lbB lbb">${brk(235, 80, 90, "fora: ?% do volume")}${brk(105, 90, 170, "dentro", "end", -8)}</g>`, 7),
+
+  /* Q12: boia mantida sob a água */
+  12: () => fsvg("340 190", `
+    <g class="an k-boia"><circle cx="170" cy="120" r="17" fill="none" stroke="${C.red}" stroke-width="12" stroke-dasharray="13.3 13.3"/>
+      <circle cx="170" cy="120" r="17" fill="none" stroke="#fff" stroke-width="12" stroke-dasharray="13.3 13.3" stroke-dashoffset="13.3"/>
+      <circle cx="170" cy="120" r="23" fill="none" stroke="#9a2338" stroke-width="1.2"/><circle cx="170" cy="120" r="11" fill="none" stroke="#9a2338" stroke-width="1.2"/></g>
+    <rect x="41" y="71" width="258" height="113" fill="${C.w}" opacity=".5"/>
+    <path d="M40,70 V185 H300 V70" fill="none" stroke="${C.gl}" stroke-width="3"/>
+    <g class="an k-lbB lbb">${farr(215, 120, 215, 60, C.grn)}${ftx(222, 74, "E", "g")}
+      ${farr(125, 120, 125, 134, C.red)}${ftx(112, 146, "P", "r")}
+      ${farr(170, 40, 170, 96, C.amb)}${ftx(178, 54, "F = ? (pessoa)")}</g>
+    ${ftx(8, 20, "boia: 5 L e 1 kg")}`, 8),
+
+  /* Q13: submarino a 15 m (escala de 5 em 5 m) */
+  13: () => fsvg("340 200", `
+    <defs><linearGradient id="fg13" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc0d3"/><stop offset="1" stop-color="#12485c"/></linearGradient></defs>
+    <rect x="0" y="0" width="340" height="30" fill="#eaf3f2"/><rect x="0" y="30" width="340" height="170" fill="url(#fg13)"/>
+    <g stroke="#fff" stroke-width="1.5">${[0, 1, 2, 3].map(i => `<line x1="296" y1="${30 + i * 33.3}" x2="304" y2="${30 + i * 33.3}"/>`).join("")}<line x1="300" y1="30" x2="300" y2="130"/></g>
+    ${[0, 1, 2, 3].map(i => ftx(308, 34 + i * 33.3, i * 5 + " m", "w")).join("")}
+    <g class="an k-sub lin"><ellipse cx="140" cy="130" rx="44" ry="15" fill="${C.amb}" stroke="#8a6a10" stroke-width="2"/>
+      <rect x="130" y="108" width="20" height="10" rx="2" fill="${C.amb}" stroke="#8a6a10" stroke-width="2"/><path d="M96,130 l-10,-9 v18 z" fill="#8a6a10"/>
+      <circle cx="168" cy="130" r="5.5" fill="#e8f1f0" stroke="#8a6a10" stroke-width="2"/></g>
+    <g class="an k-lbB lbb">${farr(214, 122, 178, 128, "#fff")}${farr(214, 130, 178, 130, "#fff")}${farr(214, 138, 178, 132, "#fff")}${ftx(200, 158, "p·A = ?", "w", 'text-anchor="middle"')}</g>
+    <g class="big w">${["0 m", "5 m", "10 m", "15 m"].map((t, i) => ftx(230, 70, t, `an k-d${i} w`, 'text-anchor="middle" style="font-size:18px"')).join("")}</g>`, 8),
+
+  15: () => fsvg("340 200", `
+    <line x1="20" y1="10" x2="270" y2="10" stroke="#555" stroke-width="5"/>
+    <path class="an k-str" pathLength="1" d="M160,10 V130" stroke="#444" stroke-width="2" fill="none"/>
+    <g class="an k-cubo"><rect x="140" y="130" width="40" height="40" fill="#c9b79c" stroke="#7a6a4f" stroke-width="2"/>${ftx(160, 154, "24 kg", "", 'text-anchor="middle"')}</g>
+    <rect x="71" y="100" width="178" height="90" fill="${C.w}" opacity=".5"/>
+    <path d="M70,80 V190 H250 V80" fill="none" stroke="${C.gl}" stroke-width="3"/>
+    <line x1="71" y1="100" x2="249" y2="100" stroke="#4aa3bd" stroke-width="2"/>
+    <g class="an k-lbB lbb">${farr(205, 140, 205, 186, C.red)}${ftx(198, 134, "P", "r")}
+      ${farr(220, 150, 220, 135, C.grn)}${ftx(214, 166, "E", "g")}${farr(235, 150, 235, 119, C.amb)}${ftx(229, 166, "T")}</g>
+    ${ftx(8, 40, "cubo de 20 cm de aresta")}`, 8),
+  /* Q16: cubo na mola, a água sobe e a mola encurta */
+  16: () => {
+    const zz = Array.from({ length: 6 }, (_, i) => `${i % 2 ? 158 : 182},${(14 + (i + .5) * 6.3).toFixed(1)}`).join(" ");
+    return fsvg("340 190", `
+    <line x1="100" y1="8" x2="240" y2="8" stroke="#555" stroke-width="5"/>
+    <g class="an k-qs ot"><polyline points="170,8 170,14 ${zz} 170,52 170,58" fill="none" stroke="#444" stroke-width="2"/></g>
+    <g class="an k-qc"><rect x="140" y="58" width="60" height="60" fill="#c9b79c" stroke="#7a6a4f" stroke-width="2"/>${ftx(170, 92, "40 kg", "", 'text-anchor="middle"')}</g>
+    <g class="an k-qw ob"><rect x="91" y="88" width="158" height="97" fill="${C.w}" opacity=".55"/></g>
+    <path d="M90,50 V185 H250 V50" fill="none" stroke="${C.gl}" stroke-width="3"/>
+    ${ftx(8, 40, "recipiente vazio:", "")}${ftx(8, 54, "x₀ = 5 cm", "")}
+    <g class="an k-lbB lbb">${ftx(258, 92, "água na")}${ftx(258, 106, "metade")}${ftx(258, 120, "do cubo")}${ftx(258, 144, "x = ?", "r")}</g>`, 8);
+  },
+
+  /* Q18: balança com bloco pendurado, a leitura sobe */
+  18: () => fsvg("340 200", `
+    <line x1="20" y1="8" x2="270" y2="8" stroke="#555" stroke-width="5"/>
+    <path class="an k-str" pathLength="1" d="M170,8 V108" stroke="#444" stroke-width="2" fill="none"/>
+    <g class="an k-cubo"><rect x="150" y="108" width="40" height="40" fill="#c9b79c" stroke="#7a6a4f" stroke-width="2"/>${ftx(170, 132, "4 kg", "", 'text-anchor="middle"')}</g>
+    <rect x="91" y="82" width="158" height="88" fill="${C.w}" opacity=".5"/>
+    <path d="M90,60 V170 H250 V60" fill="none" stroke="${C.gl}" stroke-width="3"/>
+    <rect x="60" y="170" width="220" height="24" rx="4" fill="#12313d"/>
+    <g class="an k-lbA lba">${ftx(170, 187, "3,0 kg", "w big", 'text-anchor="middle"')}</g>
+    <g class="an k-lbB lbb">${ftx(170, 187, "4,0 kg", "w big", 'text-anchor="middle"')}</g>
+    ${ftx(8, 50, "recipiente + água: 3,0 kg")}`, 8),
+
+  /* Q24: cubo entre óleo e água (figura estática, escala 6 px por cm) */
+  24: () => fsvg("340 200", `
+    <rect x="91" y="52" width="158" height="48" fill="${C.oil}" opacity=".55"/><rect x="91" y="100" width="158" height="80" fill="${C.w}" opacity=".6"/>
+    <path d="M90,30 V180 H250 V30" fill="none" stroke="${C.gl}" stroke-width="3"/>
+    <line x1="91" y1="100" x2="249" y2="100" stroke="#8a6a10" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <rect x="140" y="70" width="60" height="60" fill="#c9b79c" stroke="#7a6a4f" stroke-width="2"/>${ftx(170, 104, "900 kg/m³", "", 'text-anchor="middle"')}
+    ${ftx(98, 46, "óleo (800)")}${ftx(98, 172, "água (1000)")}
+    ${brk(214, 52, 70, "3 cm")}${brk(214, 70, 100, "5 cm")}${brk(214, 100, 130, "5 cm")}`, 8)
+};
+</script>
+<script>
+"use strict";
+/* Novos módulos do site do aluno: manômetro, exercícios, navegação e painel de fórmulas.
+   Os laboratórios de pressão, densidade, Stevin, vasos, tubo em U, Pascal, Arquimedes e Torricelli estão em labs.js. */
+
+/* ---------- Manômetro de tubo aberto ---------- */
+(function manometro() {
+  const p = $("mn-p"), fl = $("mn-fl"), dots = $("mn-dots");
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pts = Array.from({ length: 140 }, () => [rnd(), rnd()]);
+  const P0 = 1e5, YR = 170, PXCM = 4;
+  const cfg = { 13600: { min: -25, max: 25, step: 1, v: 15, c: "#98a4ab", o: 1 }, 1000: { min: -3, max: 3, step: 0.1, v: 3, c: "#1f7a8c", o: 0.7 } };
+  function setRange() {
+    const c = cfg[+fl.value];
+    set(p, { min: c.min, max: c.max, step: c.step }); p.value = c.v * (+fl.value === 13600 ? 1 : 1);
+  }
+  function draw() {
+    const d = +fl.value, c = cfg[d], pm = +p.value * 1000; // Pa manométrica
+    const dh = pm / (d * G); // m (positivo: ramo aberto mais alto)
+    const s = dh * 100 * PXCM, yl = YR + s / 2, yr = YR - s / 2;
+    [["mn-bw", { x: 220, y: 250, width: 160, height: 40 }], ["mn-lw", { x: 220, y: yl, width: 40, height: 250 - yl }], ["mn-rw", { x: 340, y: yr, width: 40, height: 250 - yr }]]
+      .forEach(([id, a]) => set($(id), { ...a, fill: c.c, opacity: c.o }));
+    set($("mn-line"), { y1: yl, y2: yl });
+    set($("mn-br"), { y1: yl, y2: yr }); set($("mn-brt"), { y: (yl + yr) / 2 + 5 });
+    $("mn-brt").textContent = "Δh = " + fmt(dh * 100, 1) + " cm";
+    const pg = P0 + pm, n = clamp(Math.round(40 + 160 * (pg / P0 - 0.7)), 10, 140);
+    dots.textContent = "";
+    for (let i = 0; i < n; i++) dots.appendChild(mk("circle", { cx: 208 + pts[i][0] * 64, cy: 28 + pts[i][1] * 54, r: 2.5 }));
+    $("mn-po").textContent = (+p.value >= 0 ? "+" : "") + fmt(+p.value, 1) + " kPa";
+    $("mn-out").innerHTML = `p<sub>gás</sub> = p₀ + d·g·Δh = 100 000 + ${fmt(d)}·10·${fmt(dh, 3)} <br><span class="big">${fmt(Math.round(pg))} Pa</span> <span class="k">· manométrica: ${fmt(Math.round(pm))} Pa · ${pm > 0 ? "gás acima da atmosférica: o ramo aberto sobe" : pm < 0 ? "gás abaixo da atmosférica: o ramo aberto desce" : "igual à atmosférica: níveis iguais"}</span>`;
+  }
+  p.oninput = draw; fl.onchange = () => { setRange(); draw(); };
+  setRange(); draw();
+})();
+
+/* ---------- Exercícios por tópico ---------- */
+(function exercicios() {
+  const KIND = { real: ["Prova real", "real"], parcial: ["Vestibular · fonte parcial", "parcial"], original: ["Original", "original"] };
+  let done = {};
+  try { done = JSON.parse(localStorage.getItem("hidro-done") || "{}"); } catch (e) { /* sem armazenamento: segue sem salvar */ }
+  const save = () => { try { localStorage.setItem("hidro-done", JSON.stringify(done)); } catch (e) { /* ignora */ } };
+  for (const topic in EXERCISES) {
+    const box = $("ex-" + topic); if (!box) continue;
+    EXERCISES[topic].forEach(e => {
+      const [label, cls] = KIND[e.kind];
+      const d = document.createElement("details"); d.className = "ex"; d.id = "ex-" + e.id;
+      d.innerHTML = `<summary><span class="eid">${e.id}</span><span class="etitle">${e.title}</span><span class="tag ${cls}">${label}</span></summary>
+        <div class="body"><p class="src">Fonte: ${e.src}</p><p class="q">${e.q}</p>
+        <details class="sol"><summary>Ver resolução</summary><ol>${e.steps.map(s => `<li>${s}</li>`).join("")}</ol><p><span class="ans">Resposta: ${e.ans}</span></p></details>
+        <label class="chk"><input type="checkbox"> feito em aula</label></div>`;
+      const cb = d.querySelector("input"); cb.checked = !!done[e.id]; d.classList.toggle("done", cb.checked);
+      cb.onchange = () => { done[e.id] = cb.checked; d.classList.toggle("done", cb.checked); save(); };
+      box.appendChild(d);
+    });
+  }
+})();
+
+/* ---------- navegação e painel de fórmulas ---------- */
+(function nav() {
+  const secs = [...document.querySelectorAll("main section[data-topic]")];
+  const links = [...document.querySelectorAll("[data-nav]")];
+  const fxs = [...document.querySelectorAll(".fx[data-topic]")];
+  const cur = $("fx-current");
+  function activate(topic) {
+    links.forEach(l => l.classList.toggle("active", l.dataset.nav === topic));
+    fxs.forEach(f => f.classList.toggle("active", f.dataset.topic === topic));
+    const f = fxs.find(x => x.dataset.topic === topic);
+    if (f && cur) cur.innerHTML = f.querySelector(".f").innerHTML;
+    if (f && !matchMedia("(max-width:1100px)").matches) $("formulas").scrollTo({ top: f.offsetTop - 70, behavior: "smooth" });
+    const a = document.querySelector(`.tabs a[data-nav="${topic}"]`);
+    if (a && a.scrollIntoView) { const t = a.parentElement; t.scrollTo({ left: a.offsetLeft - 40, behavior: "smooth" }); }
+  }
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) activate(e.target.dataset.topic); });
+  }, { rootMargin: "-30% 0px -60% 0px" });
+  secs.forEach(s => io.observe(s));
+  activate(secs[0].dataset.topic);
+  const panel = $("formulas"), btn = $("fx-toggle");
+  btn.onclick = () => { const open = panel.classList.toggle("open"); btn.setAttribute("aria-expanded", open); };
+})();
+
+/* ---------- Simulado ---------- */
+(function simulado() {
+  const list = $("sim-list"), gab = $("sim-gab"), L = "abcde";
+  const isOrig = s => s.startsWith("original");
+  const tag = s => `<span class="tag ${isOrig(s) ? "original" : "real"}">${isOrig(s) ? "Original" : "Prova real"}</span>`;
+  SIMULADO.forEach(q => {
+    if (q.hard) {
+      const h = document.createElement("div"); h.className = "sim-sec";
+      h.innerHTML = `<h3 class="exh">Desafio: nível vestibular militar e ITA</h3><p>As questões ${q.n} a ${SIMULADO[SIMULADO.length - 1].n} juntam duas ou três ideias por questão e exigem mais etapas de cálculo. Leia o enunciado com calma e desenhe as forças antes de contar.</p>`;
+      list.appendChild(h);
+    }
+    const d = document.createElement("div"); d.className = "sq"; d.id = "sq-" + q.n;
+    const body = q.opts
+      ? `<div class="opts">${q.opts.map((o, i) => `<label><input type="radio" name="q${q.n}" value="${i}"> <span><b>${L[i]})</b> ${o}</span></label>`).join("")}</div>`
+      : `<p class="disc">Resolva no caderno, com dados, fórmula, conta e unidades.</p>`;
+    d.innerHTML = `<div class="sqh"><b>${q.n}.</b> ${tag(q.src)} <small>${isOrig(q.src) ? "" : q.src}</small></div><p class="q">${q.q}</p>${FIGS[q.n] ? `<div class="figbox" data-fig="${q.n}"></div><p class="figcap">Figura ilustrativa, fora de escala.</p>` : ""}${body}`;
+    list.appendChild(d);
+  });
+  /* figuras animadas: tocam só quando visíveis */
+  const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle("on", e.isIntersecting)), { threshold: .35 });
+  list.querySelectorAll(".figbox").forEach(b => {
+    const draw = () => { b.innerHTML = `<button type="button" class="rep" aria-label="Repetir animação">↻ repetir</button>` + FIGS[b.dataset.fig](); b.querySelector(".rep").onclick = draw; };
+    draw(); io.observe(b);
+  });
+  const clearRes = () => {
+    list.querySelectorAll(".sq-res,.sim-banner").forEach(n => n.remove());
+    list.querySelectorAll(".sq").forEach(c => c.classList.remove("acertou", "errou"));
+    list.querySelectorAll("label").forEach(l => l.classList.remove("right", "wrong"));
+  };
+  $("sim-check").onclick = () => {
+    clearRes();
+    let ok = 0, tot = 0, blank = 0;
+    SIMULADO.forEach(q => {
+      const card = $("sq-" + q.n); let head;
+      if (q.opts) {
+        tot++;
+        const sel = card.querySelector("input:checked"), got = sel ? +sel.value : -1;
+        card.querySelectorAll("label").forEach((lb, i) => { lb.classList.toggle("right", i === q.key); lb.classList.toggle("wrong", i === got && got !== q.key); });
+        if (got === -1) blank++;
+        else card.classList.add(got === q.key ? "acertou" : "errou");
+        if (got === q.key) ok++;
+        head = `Resposta: <span class="ans">${L[q.key]}</span> ` + (got === -1 ? "· sem resposta" : got === q.key ? `· <span class="ok">você acertou</span>` : `· <span class="no">você marcou ${L[got]}</span>`);
+      } else head = "Discursiva: compare com a sua resolução.";
+      const r = document.createElement("div"); r.className = "sq-res";
+      r.innerHTML = `<p><b>${head}</b></p><p>${q.res}</p>`; card.appendChild(r);
+    });
+    const ban = document.createElement("div"); ban.className = "sim-banner";
+    ban.innerHTML = `Múltipla escolha: ${ok} de ${tot} corretas.${blank ? `<small>${blank} sem resposta</small>` : ""}`;
+    list.prepend(ban);
+    $("sim-score").textContent = `Múltipla escolha: ${ok} de ${tot} corretas. A resolução de cada questão está logo abaixo dela.`;
+    ban.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  $("sim-reset").onclick = () => {
+    list.querySelectorAll("input").forEach(i => i.checked = false);
+    clearRes(); $("sim-score").textContent = "";
+    list.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+})();
+</script>
+</body>
+</html>
